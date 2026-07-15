@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f7f4ef;
+  color: #111111;
+}
+
+.container-x {
+  @apply max-w-7xl mx-auto px-5 md:px-10;
+}
+
+.btn-primary {
+  @apply bg-charcoal text-white px-8 py-3 uppercase text-xs tracking-widest2 hover:bg-gold transition-colors duration-300;
+}
+
+.btn-secondary {
+  @apply border border-charcoal text-charcoal px-8 py-3 uppercase text-xs tracking-widest2 hover:bg-charcoal hover:text-white transition-colors duration-300;
+}
+
+.section-heading {
+  @apply font-serif text-3xl md:text-4xl text-charcoal;
+}
