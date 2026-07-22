@@ -29,106 +29,65 @@ export const collections = [
 
 const productList = [
   {
-    id: "p1",
-    slug: "aurum-chronograph",
-    name: "Aurum Chronograph",
-    collection: "watches",
-    price: 245000,
-    compareAtPrice: 275000,
-    description:
-      "The Aurum Chronograph is hand-assembled from 316L surgical steel with an 18k gold-plated bezel. A sapphire crystal face resists scratching for a lifetime of wear.",
-    images: [
-      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=1200&q=80",
-      "https://images.unsplash.com/photo-1518131672697-613becd4ab77?w=1200&q=80",
-    ],
-    sizes: ["38mm", "42mm"],
-    stock: 12,
-    rating: 4.8,
+  id: "p1",
+  slug: "cherry-blast-lip-balm",
+  name: "Cherry Blast Hydrating Lip Balm",
+  collection: "lip-care", // apna collection slug daal do
+  price: 199, // apna actual price daalo
+  compareAtPrice: 399,
+  description:
+    "Meziva's Cherry Blast Hydrating Lip Balm is a deeply nourishing everyday balm built around real cherry extract, Mango Butter, and Vitamin E. It melts into lips instantly, sealing in moisture while a built-in SPF 30 shields against sun damage and pigmentation. With regular use, lips feel visibly smoother, look naturally plump, and carry a soft rosy-red tint that needs no extra lipstick.",
+  howToUse:
+    "Start with clean, dry lips. Swipe the balm evenly across both lips in a single smooth stroke. Reapply whenever lips feel dry, before sun exposure, or after eating/drinking. For best results, use morning and night.",
+  additionalInfo: {
+    "Key Ingredients": "Mango Butter, Vitamin E, Cherry Extract",
+    "SPF": "SPF 30 (Sun Protection)",
+    "Net Weight": "4.5 g",
+    "Finish": "Natural rosy tint, glossy",
+    "Skin Type": "All skin types",
+    "Fragrance": "Cherry",
+  },
+  images: ["/images/cherry-after-before-image.jpg",
+  "/images/cherry-how-to-use.jpg",
+  "/images/cherry-nourishment.jpg",
+  "/images/cherry-why-love-it2.jpg"
+
+
+  ], // apni image ka actual path daalo
+  sizes: ["4.5g"],
+  stock: 50,
+  rating: 4.7,
+  reviews: [],
   },
   {
     id: "p2",
-    slug: "midnight-diver",
-    name: "Midnight Diver",
-    collection: "watches",
-    price: 189000,
-    compareAtPrice: null,
+    slug: "berry-blast-lip-balm",
+    name: "Berry Blast Hydrating Lip Balm",
+    collection: "lip-care",
+    price: 199,
+    compareAtPrice: 399,
     description:
-      "Water resistant to 300m, the Midnight Diver pairs a matte ceramic case with a unidirectional rotating bezel built for real use, not just looks.",
-    images: [
-      "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=1200&q=80",
-      "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=1200&q=80",
+      "Meziva's Berry Blast Hydrating Lip Balm combines the richness of Shea Butter with the repairing power of Ceramide and Jojoba Oil, rounded off with a juicy mixed-berry finish. Vitamin E fights daily damage while SPF 30 protects against sun-induced darkening. The result: soft, plump, naturally radiant lips with a subtle pinkish flush.",
+    howToUse:
+      "Apply to clean, dry lips. Swipe evenly over both lips in one smooth motion. Reapply as needed throughout the day, especially before stepping out in the sun or after meals. Safe for daily, twice-a-day use.",
+    additionalInfo: {
+      "Key Ingredients": "Shea Butter, Vitamin E, Ceramide, Jojoba Oil, Berry Extract",
+      "SPF": "SPF 30 (Sun Protection)",
+      "Net Weight": "4.5 g",
+      "Finish": "Natural pinkish tint, glossy",
+      "Skin Type": "All skin types",
+      "Fragrance": "Mixed Berry",
+    },
+    images: ["/images/what-make-it-special.jpg",
+"/images/berry-after-before-image.jpg",
+"/images/how-to-use.jpg",
+"/images/nourishment.jpg"
+
     ],
-    sizes: ["40mm", "44mm"],
-    stock: 8,
+    sizes: ["4.5g"],
+    stock: 50,
     rating: 4.6,
-  },
-  {
-    id: "p3",
-    slug: "atelier-tote",
-    name: "Atelier Tote",
-    collection: "bags",
-    price: 98000,
-    compareAtPrice: 112000,
-    description:
-      "Cut from a single hide of Tuscan leather and finished by hand, the Atelier Tote develops a rich patina that is entirely its own with every wear.",
-    images: [
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1200&q=80",
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1200&q=80",
-    ],
-    sizes: ["One Size"],
-    stock: 20,
-    rating: 4.9,
-  },
-  {
-    id: "p4",
-    slug: "voyage-weekender",
-    name: "Voyage Weekender",
-    collection: "bags",
-    price: 132000,
-    compareAtPrice: null,
-    description:
-      "A weekend bag built for real travel — reinforced brass hardware, a removable shoulder strap, and enough room for a two-night stay.",
-    images: [
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=80",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=80",
-    ],
-    sizes: ["One Size"],
-    stock: 15,
-    rating: 4.7,
-  },
-  {
-    id: "p5",
-    slug: "noir-de-nuit",
-    name: "Noir de Nuit",
-    collection: "fragrance",
-    price: 24500,
-    compareAtPrice: 28000,
-    description:
-      "An intense eau de parfum built around oud, black pepper, and amber. Composed in Grasse, bottled in weighted glass with a brushed metal cap.",
-    images: [
-      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=1200&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=1200&q=80",
-    ],
-    sizes: ["50ml", "100ml"],
-    stock: 30,
-    rating: 4.5,
-  },
-  {
-    id: "p6",
-    slug: "santal-reserve",
-    name: "Santal Reserve",
-    collection: "fragrance",
-    price: 26500,
-    compareAtPrice: null,
-    description:
-      "Sandalwood, cedar, and a whisper of vanilla — a warm, low-key scent that reads as unmistakably expensive without shouting about it.",
-    images: [
-      "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=1200&q=80",
-      "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=1200&q=80",
-    ],
-    sizes: ["50ml", "100ml"],
-    stock: 18,
-    rating: 4.4,
+    reviews: [],
   },
 ];
 
@@ -148,6 +107,27 @@ export async function getProductBySlug(slug) {
 
 export async function getProductsByCollection(collectionSlug) {
   return productList.filter((p) => p.collection === collectionSlug);
+}
+
+// Returns up to `limit` other products from the same collection as `product`,
+// falling back to top-rated products overall if the collection is too small.
+export async function getRelatedProducts(product, limit = 4) {
+  if (!product) return [];
+
+  const sameCollection = productList.filter(
+    (p) => p.collection === product.collection && p.id !== product.id
+  );
+
+  if (sameCollection.length >= limit) {
+    return sameCollection.slice(0, limit);
+  }
+
+  // Top up with other highly-rated products if the collection is small
+  const fallback = productList
+    .filter((p) => p.id !== product.id && p.collection !== product.collection)
+    .sort((a, b) => b.rating - a.rating);
+
+  return [...sameCollection, ...fallback].slice(0, limit);
 }
 
 export async function getCollectionBySlug(slug) {

@@ -1,12 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
+import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
 
 export default function CartPage() {
   const { items, subtotal, updateQty, removeItem } = useCart();
+
+  // Fires whenever the bag page is viewed with items in it — the "view_cart"
+  // step of the funnel, between add_to_cart and begin_checkout.
+  useEffect(() => {
+    if (items.length === 0) return;
+    pushToDataLayer({
+      event: "view_cart",
+      ecommerce: {
+        currency: "INR",
+        value: subtotal,
+        items: items.map((item, i) => toGA4Item(item, i)),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (items.length === 0) {
     return (
@@ -23,7 +40,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container-x py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div className="container-x py-8 grid grid-cols-1 md:grid-cols-3 gap-12">
       <div className="md:col-span-2">
         <h1 className="section-heading mb-8">Your Bag</h1>
         <div className="space-y-8">
@@ -87,7 +104,7 @@ export default function CartPage() {
       {/* Order summary */}
       <div>
         <div className="bg-white p-8 sticky top-28">
-          <h2 className="font-serif text-xl mb-6">Order Summary</h2>
+          <h2 className=" text-xl mb-6">Order Summary</h2>
           <div className="flex justify-between text-sm mb-3">
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
@@ -102,6 +119,16 @@ export default function CartPage() {
           </div>
           <Link
             href="/checkout"
+            onClick={() =>
+              pushToDataLayer({
+                event: "begin_checkout",
+                ecommerce: {
+                  currency: "INR",
+                  value: subtotal,
+                  items: items.map((item, i) => toGA4Item(item, i)),
+                },
+              })
+            }
             className="btn-primary w-full text-center block mt-6"
           >
             Proceed to Checkout

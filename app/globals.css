@@ -16,7 +16,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-charcoal text-white px-8 py-3 uppercase text-xs tracking-widest2 hover:bg-gold transition-colors duration-300;
+  @apply bg-charcoal text-white px-8 py-4  font-bold uppercase text-xs tracking-widest2 hover:bg-gold transition-colors duration-300;
 }
 
 .btn-secondary {
@@ -24,5 +24,5 @@ body {
 }
 
 .section-heading {
-  @apply font-serif text-3xl md:text-4xl text-charcoal;
+  @apply font-semibold text-2xl md:text-3xl text-charcoal;
 }

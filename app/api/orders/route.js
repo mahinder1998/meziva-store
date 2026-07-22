@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { createShiprocketOrder } from "@/lib/shiprocket";
 
 // NOTE: This is a minimal file-based order store for demo purposes only.
 // In production, replace this with a real database (Postgres, MongoDB, etc).
@@ -9,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 // see the Hostinger notes for how this behaves there.
 
 const ORDERS_FILE = path.join(process.cwd(), "orders.json");
+console.log("Orders will be saved at:", ORDERS_FILE); // TEMP — hata dena baad me
 
 async function readOrders() {
   try {
@@ -34,6 +36,29 @@ export async function POST(req) {
       status: payload.paymentMethod === "COD" ? "pending" : "paid",
       ...payload,
     };
+
+    // Push the order to Shiprocket so it shows up on the Shiprocket
+    // dashboard and can be assigned a courier / AWB there.
+    //
+    // IMPORTANT: this must never block or fail the customer's order — if
+    // Shiprocket is down or misconfigured, the order is still saved and
+    // the customer still sees "order placed". We just record the failure
+    // on the order so it can be retried/pushed manually from /admin later.
+    try {
+      const shiprocketResponse = await createShiprocketOrder(order);
+      order.shiprocket = {
+        synced: true,
+        shipment_id: shiprocketResponse.shipment_id,
+        shiprocket_order_id: shiprocketResponse.order_id,
+        status: shiprocketResponse.status,
+      };
+    } catch (shiprocketErr) {
+      console.error("Shiprocket sync failed for order", order.id, shiprocketErr);
+      order.shiprocket = {
+        synced: false,
+        error: shiprocketErr.message,
+      };
+    }
 
     const orders = await readOrders();
     orders.push(order);

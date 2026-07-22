@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 
@@ -9,16 +10,16 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    { href: "/collection/watches", label: "Timepieces" },
-    { href: "/collection/bags", label: "Leather Goods" },
-    { href: "/collection/fragrance", label: "Fragrance" },
+    // { href: "/collection/watches", label: "Timepieces" },
+    // { href: "/collection/bags", label: "Leather Goods" },
+    // { href: "/collection/fragrance", label: "Fragrance" },
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-black/10">
+    <header className="sticky top-0 z-40 bg-white backdrop-blur">
       <div className="container-x flex items-center justify-between h-20">
         {/* Mobile menu button */}
-        <button
+        {/* <button
           className="md:hidden text-charcoal"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Toggle menu"
@@ -30,13 +31,19 @@ export default function Navbar() {
               strokeWidth="1.5"
             />
           </svg>
-        </button>
+        </button> */}
 
         <Link
           href="/"
-          className="font-serif text-2xl tracking-widest2 text-charcoal"
+          className=" text-2xl tracking-widest2 text-charcoal"
         >
-          LUXE
+          <Image
+            src="https://meziva.sirv.com/Images/meziva-logo-final.png"
+            alt="meziva"
+            fill
+            sizes="130px"
+            className="object-contain !relative"
+          />
         </Link>
 
         <nav className="hidden md:flex gap-10">

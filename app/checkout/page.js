@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
+import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
 
-const SHIPPING_FLAT = 199;
+const SHIPPING_FLAT = 29;
 const FREE_SHIPPING_THRESHOLD = 5000;
 
 export default function CheckoutPage() {
@@ -28,6 +29,37 @@ export default function CheckoutPage() {
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT;
   const total = subtotal + shipping;
+
+  // Safety net: fires begin_checkout if someone lands directly on
+  // /checkout (bookmark, back button) without clicking the button in
+  // Cart/MiniCart — those already fire it on click, this just covers the
+  // gap so the funnel step is never missed.
+  useEffect(() => {
+    if (items.length === 0) return;
+    pushToDataLayer({
+      event: "begin_checkout",
+      ecommerce: {
+        currency: "INR",
+        value: subtotal,
+        items: items.map((item, i) => toGA4Item(item, i)),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function pushPurchaseEvent(orderId, method) {
+    pushToDataLayer({
+      event: "purchase",
+      ecommerce: {
+        transaction_id: orderId,
+        currency: "INR",
+        value: total,
+        shipping,
+        payment_type: method,
+        items: items.map((item, i) => toGA4Item(item, i)),
+      },
+    });
+  }
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -76,6 +108,7 @@ export default function CheckoutPage() {
     try {
       const result = await saveOrder();
       if (result.success) {
+        pushPurchaseEvent(result.order.id, "COD");
         clearCart();
         router.push(`/order-success?orderId=${result.order.id}&method=COD`);
       } else {
@@ -114,7 +147,7 @@ export default function CheckoutPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.order.amount,
         currency: "INR",
-        name: "LUXE",
+        name: "meziva",
         description: "Order Payment",
         order_id: orderData.order.id,
         prefill: {
@@ -136,6 +169,7 @@ export default function CheckoutPage() {
             const result = await saveOrder({
               razorpay: response,
             });
+            pushPurchaseEvent(result.order.id, "RAZORPAY");
             clearCart();
             router.push(
               `/order-success?orderId=${result.order.id}&method=RAZORPAY`
@@ -155,8 +189,11 @@ export default function CheckoutPage() {
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function () {
-        setError("Payment failed. Please try again.");
+      rzp.on("payment.failed", function (response) {
+        console.error("Razorpay payment failed:", response.error);
+        setError(
+          `Payment failed: ${response.error.description || "Please try again."}`
+        );
         setLoading(false);
       });
       rzp.open();
@@ -187,10 +224,10 @@ export default function CheckoutPage() {
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div className="container-x py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="container-x py-4 grid grid-cols-1 md:grid-cols-3 gap-12">
         <form onSubmit={handleSubmit} className="md:col-span-2 space-y-8">
           <div>
-            <h2 className="font-serif text-xl mb-6">Shipping Details</h2>
+            <h2 className=" text-xl mb-6">Shipping Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 name="name"
@@ -246,7 +283,7 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <h2 className="font-serif text-xl mb-6">Payment Method</h2>
+            <h2 className=" text-xl mb-6">Payment Method</h2>
             <div className="space-y-3">
               <label
                 className={`flex items-center gap-3 border px-4 py-4 cursor-pointer ${
@@ -307,7 +344,7 @@ export default function CheckoutPage() {
         {/* Order summary */}
         <div>
           <div className="bg-white p-8 sticky top-28">
-            <h2 className="font-serif text-xl mb-6">Order Summary</h2>
+            <h2 className=" text-xl mb-6">Order Summary</h2>
             <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
               {items.map((item) => (
                 <div key={item.key} className="flex justify-between text-sm">

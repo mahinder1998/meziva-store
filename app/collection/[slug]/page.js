@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const collection = await getCollectionBySlug(params.slug);
   if (!collection) return {};
   return {
-    title: `${collection.name} — LUXE`,
+    title: `${collection.name} — meziva`,
     description: collection.description,
   };
 }

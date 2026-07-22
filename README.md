@@ -1,4 +1,4 @@
-# LUXE — Next.js Ecommerce Starter
+# meziva — Next.js Ecommerce Starter
 
 Full storefront: Home, Collection pages, Product Detail (PDP), Cart, MiniCart
 drawer, Checkout with **Razorpay** (Cards/UPI/Netbanking) + **Cash on
@@ -79,8 +79,8 @@ properly. VPS is the reliable option.
 4. **Upload your project.** Easiest way: push your code to a GitHub repo,
    then on the VPS:
    ```bash
-   git clone https://github.com/yourusername/luxe-store.git
-   cd luxe-store
+   git clone https://github.com/yourusername/meziva-store.git
+   cd meziva-store
    npm install
    ```
    (Or upload the zip via Hostinger's File Manager / SCP and unzip on the
@@ -90,7 +90,7 @@ properly. VPS is the reliable option.
 6. **Build and start:**
    ```bash
    npm run build
-   pm2 start npm --name "luxe-store" -- start
+   pm2 start npm --name "meziva-store" -- start
    pm2 save
    pm2 startup
    ```
@@ -101,7 +101,7 @@ properly. VPS is the reliable option.
    ```bash
    apt install -y nginx certbot python3-certbot-nginx
    ```
-   Create `/etc/nginx/sites-available/luxe-store`:
+   Create `/etc/nginx/sites-available/meziva-store`:
    ```nginx
    server {
        listen 80;
@@ -119,7 +119,7 @@ properly. VPS is the reliable option.
    ```
    Then:
    ```bash
-   ln -s /etc/nginx/sites-available/luxe-store /etc/nginx/sites-enabled/
+   ln -s /etc/nginx/sites-available/meziva-store /etc/nginx/sites-enabled/
    nginx -t && systemctl restart nginx
    certbot --nginx -d yourdomain.com -d www.yourdomain.com
    ```

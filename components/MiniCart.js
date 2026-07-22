@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
+import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
 
 export default function MiniCart() {
   const {
@@ -34,7 +35,7 @@ export default function MiniCart() {
         }`}
       >
         <div className="flex items-center justify-between px-6 h-20 border-b border-black/10">
-          <h3 className="font-serif text-xl">Your Bag ({items.length})</h3>
+          <h3 className=" text-xl">Your Bag ({items.length})</h3>
           <button
             onClick={() => setMiniCartOpen(false)}
             aria-label="Close cart"
@@ -115,7 +116,17 @@ export default function MiniCart() {
             </p>
             <Link
               href="/checkout"
-              onClick={() => setMiniCartOpen(false)}
+              onClick={() => {
+                setMiniCartOpen(false);
+                pushToDataLayer({
+                  event: "begin_checkout",
+                  ecommerce: {
+                    currency: "INR",
+                    value: subtotal,
+                    items: items.map((item, i) => toGA4Item(item, i)),
+                  },
+                });
+              }}
               className="btn-primary w-full text-center block"
             >
               Checkout
