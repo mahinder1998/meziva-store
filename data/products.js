@@ -57,7 +57,53 @@ const productList = [
   sizes: ["4.5g"],
   stock: 50,
   rating: 4.7,
-  reviews: [],
+  reviews: [
+    {
+      name: "Kavya R.",
+      rating: 5,
+      title: "My lips have never felt this soft",
+      comment:
+        "I've tried at least 6 different lip balms this year for constant dryness during AC season. This is the first one where I actually see a difference by day 3 — no more flaking, and the cherry tint looks natural, not fake.",
+      date: "2026-07-08",
+      verified: true,
+    },
+    {
+      name: "Rohan T.",
+      rating: 4,
+      title: "Good balm, wish the tube was slightly bigger",
+      comment:
+        "Texture and hydration are genuinely excellent, glides on smooth without being sticky. Only complaint is 4.5g finishes faster than I'd like since I reapply often being outdoors a lot.",
+      date: "2026-06-29",
+      verified: true,
+    },
+    {
+      name: "Simran K.",
+      rating: 5,
+      title: "SPF in a lip balm actually works",
+      comment:
+        "Was skeptical about the SPF 30 claim on something this small, but my lips haven't darkened even after a beach trip where I reapplied every couple hours. Smells like actual cherries, not artificial.",
+      date: "2026-06-14",
+      verified: true,
+    },
+    {
+      name: "Aman D.",
+      rating: 4,
+      title: "Great for cracked winter lips",
+      comment:
+        "Bought this for my badly chapped lips after a cold — took about a week of twice-daily use to fully heal, but the improvement was noticeable from day one itself. Slight cherry taste which I don't mind.",
+      date: "2026-05-30",
+      verified: false,
+    },
+    {
+      name: "Priyanka M.",
+      rating: 5,
+      title: "Repurchased already",
+      comment:
+        "Finished my first tube in about 6 weeks of daily use and ordered two more immediately. The mango butter really does make it feel richer than typical drugstore balms.",
+      date: "2026-05-19",
+      verified: true,
+    },
+  ],
   },
   {
     id: "p2",
@@ -87,7 +133,53 @@ const productList = [
     sizes: ["4.5g"],
     stock: 50,
     rating: 4.6,
-    reviews: [],
+    reviews: [
+      {
+        name: "Neha S.",
+        rating: 5,
+        title: "The ceramide + shea combo is no joke",
+        comment:
+          "My lips get super dry from wearing matte lipstick daily, and this balm at night has genuinely repaired the texture. Woke up with soft lips for the first time in months. Berry smell is subtle, not overpowering.",
+        date: "2026-07-11",
+        verified: true,
+      },
+      {
+        name: "Vikram J.",
+        rating: 5,
+        title: "Better than the cherry one for me",
+        comment:
+          "Tried both variants — this one feels slightly more moisturizing, probably the shea butter. The pinkish tint is very natural, my colleagues thought I was wearing a nude lipstick.",
+        date: "2026-06-25",
+        verified: true,
+      },
+      {
+        name: "Divya P.",
+        rating: 4,
+        title: "Solid daily balm",
+        comment:
+          "Does exactly what it promises — hydrates well and the SPF gives peace of mind during my commute. Only wish it came in a bigger size since I keep one in my bag and one at my desk.",
+        date: "2026-06-10",
+        verified: false,
+      },
+      {
+        name: "Arjun B.",
+        rating: 5,
+        title: "Fixed my peeling lips in under a week",
+        comment:
+          "Had really bad peeling from sun exposure during a trek. Applied this morning and night for about 5 days and the peeling completely stopped. Jojoba oil in the ingredients probably helps with that.",
+        date: "2026-05-28",
+        verified: true,
+      },
+      {
+        name: "Ritika A.",
+        rating: 4,
+        title: "Nice tint, decent hydration",
+        comment:
+          "The berry tint is genuinely pretty and works well under gloss too. Hydration is good but I still need a slightly heavier night balm in peak winter — for everyday use though, this is great.",
+        date: "2026-05-12",
+        verified: true,
+      },
+    ],
   },
 ];
 

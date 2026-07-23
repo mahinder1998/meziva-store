@@ -7,6 +7,7 @@ import { Suspense } from "react";
 function OrderSuccessContent() {
   const params = useSearchParams();
   const orderId = params.get("orderId");
+  const orderNumber = params.get("orderNumber");
   const method = params.get("method");
 
   return (
@@ -18,9 +19,12 @@ function OrderSuccessContent() {
       <p className="text-charcoal/60 mb-2">
         Thank you for your order! We&apos;ve sent a confirmation to your email.
       </p>
+      {orderNumber && (
+        <p className="text-lg font-medium mb-1">Order #{orderNumber}</p>
+      )}
       {orderId && (
-        <p className="text-sm text-charcoal/40 mb-8">
-          Order ID: <span className="font-mono">{orderId}</span>
+        <p className="text-xs text-charcoal/40 mb-8">
+          Reference ID: <span className="font-mono">{orderId}</span>
         </p>
       )}
       {method === "COD" && (

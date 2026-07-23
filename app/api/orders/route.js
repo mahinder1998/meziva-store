@@ -1,29 +1,8 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { createShiprocketOrder } from "@/lib/shiprocket";
-
-// NOTE: This is a minimal file-based order store for demo purposes only.
-// In production, replace this with a real database (Postgres, MongoDB, etc).
-// On most serverless hosts the filesystem is not persistent/writable —
-// see the Hostinger notes for how this behaves there.
-
-const ORDERS_FILE = path.join(process.cwd(), "orders.json");
-console.log("Orders will be saved at:", ORDERS_FILE); // TEMP — hata dena baad me
-
-async function readOrders() {
-  try {
-    const data = await fs.readFile(ORDERS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function writeOrders(orders) {
-  await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2));
-}
+import { addOrder, getNextOrderNumber } from "@/lib/orders";
+import { sendOrderEmailAlert, sendOrderWhatsAppAlert } from "@/lib/notifications";
 
 // POST /api/orders — create a new order (COD or paid)
 export async function POST(req) {
@@ -32,6 +11,7 @@ export async function POST(req) {
 
     const order = {
       id: uuidv4(),
+      orderNumber: await getNextOrderNumber(),
       createdAt: new Date().toISOString(),
       status: payload.paymentMethod === "COD" ? "pending" : "paid",
       ...payload,
@@ -43,7 +23,7 @@ export async function POST(req) {
     // IMPORTANT: this must never block or fail the customer's order — if
     // Shiprocket is down or misconfigured, the order is still saved and
     // the customer still sees "order placed". We just record the failure
-    // on the order so it can be retried/pushed manually from /admin later.
+    // on the order so it can be reviewed from /admin/orders.
     try {
       const shiprocketResponse = await createShiprocketOrder(order);
       order.shiprocket = {
@@ -60,9 +40,23 @@ export async function POST(req) {
       };
     }
 
-    const orders = await readOrders();
-    orders.push(order);
-    await writeOrders(orders);
+    await addOrder(order);
+
+    // Notify the store owner — email + WhatsApp. Same rule as Shiprocket
+    // above: these must NEVER fail or delay the customer's order. Each is
+    // wrapped separately so one failing (e.g. email misconfigured) doesn't
+    // stop the other from sending.
+    try {
+      await sendOrderEmailAlert(order);
+    } catch (emailErr) {
+      console.error("Order email alert failed:", emailErr.message);
+    }
+
+    try {
+      await sendOrderWhatsAppAlert(order);
+    } catch (waErr) {
+      console.error("Order WhatsApp alert failed:", waErr.message);
+    }
 
     return NextResponse.json({ success: true, order });
   } catch (err) {
@@ -74,8 +68,7 @@ export async function POST(req) {
   }
 }
 
-// GET /api/orders — list orders (e.g. for a simple admin view)
-export async function GET() {
-  const orders = await readOrders();
-  return NextResponse.json({ orders });
-}
+// NOTE: There used to be a GET handler here returning every order,
+// unauthenticated — anyone who knew the URL could see all customers' names,
+// phone numbers, and addresses. That's been removed. To view orders, log in
+// at /admin/orders instead (password-protected via ADMIN_PASSWORD).

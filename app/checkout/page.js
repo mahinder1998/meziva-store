@@ -110,7 +110,9 @@ export default function CheckoutPage() {
       if (result.success) {
         pushPurchaseEvent(result.order.id, "COD");
         clearCart();
-        router.push(`/order-success?orderId=${result.order.id}&method=COD`);
+        router.push(
+          `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=COD`
+        );
       } else {
         setError("Something went wrong placing your order. Try again.");
       }
@@ -172,7 +174,7 @@ export default function CheckoutPage() {
             pushPurchaseEvent(result.order.id, "RAZORPAY");
             clearCart();
             router.push(
-              `/order-success?orderId=${result.order.id}&method=RAZORPAY`
+              `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=RAZORPAY`
             );
           } else {
             setError(
