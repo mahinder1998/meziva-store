@@ -38,11 +38,11 @@ export default function Navbar() {
           className=" text-2xl tracking-widest2 text-charcoal"
         >
           <Image
-            src="https://meziva.sirv.com/Images/meziva-logo-final.png"
+            src="/images/meziva-logo-final.png"
             alt="meziva"
             fill
             sizes="130px"
-            className="object-contain !relative"
+            className="object-contain !relative !w-[120px] !h-auto"
           />
         </Link>
 
