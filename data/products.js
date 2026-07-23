@@ -5,105 +5,90 @@
 
 export const collections = [
   {
-    slug: "watches",
-    name: "Timepieces",
-    description: "Precision-crafted watches for the discerning collector.",
-    image:
-      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=1200&q=80",
-  },
-  {
-    slug: "bags",
-    name: "Leather Goods",
-    description: "Hand-stitched bags made from full-grain leather.",
-    image:
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1200&q=80",
-  },
-  {
-    slug: "fragrance",
-    name: "Fragrance",
-    description: "Signature scents, composed in small batches.",
-    image:
-      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=1200&q=80",
+    slug: "lip-care",
+    name: "Lip Care",
+    description: "Hydrating, SPF-protected lip balms made with real fruit extracts.",
+    image: "/images/cherry-blast-main.jpg",
   },
 ];
 
 const productList = [
   {
-  id: "p1",
-  slug: "cherry-blast-lip-balm",
-  name: "Cherry Blast Hydrating Lip Balm",
-  collection: "lip-care", // apna collection slug daal do
-  price: 199, // apna actual price daalo
-  compareAtPrice: 399,
-  description:
-    "Meziva's Cherry Blast Hydrating Lip Balm is a deeply nourishing everyday balm built around real cherry extract, Mango Butter, and Vitamin E. It melts into lips instantly, sealing in moisture while a built-in SPF 30 shields against sun damage and pigmentation. With regular use, lips feel visibly smoother, look naturally plump, and carry a soft rosy-red tint that needs no extra lipstick.",
-  howToUse:
-    "Start with clean, dry lips. Swipe the balm evenly across both lips in a single smooth stroke. Reapply whenever lips feel dry, before sun exposure, or after eating/drinking. For best results, use morning and night.",
-  additionalInfo: {
-    "Key Ingredients": "Mango Butter, Vitamin E, Cherry Extract",
-    "SPF": "SPF 30 (Sun Protection)",
-    "Net Weight": "4.5 g",
-    "Finish": "Natural rosy tint, glossy",
-    "Skin Type": "All skin types",
-    "Fragrance": "Cherry",
-  },
-  images: ["/images/cherry-after-before-image.jpg",
-  "/images/cherry-how-to-use.jpg",
-  "/images/cherry-nourishment.jpg",
-  "/images/cherry-why-love-it2.jpg"
-
-
-  ], // apni image ka actual path daalo
-  sizes: ["4.5g"],
-  stock: 50,
-  rating: 4.7,
-  reviews: [
-    {
-      name: "Kavya R.",
-      rating: 5,
-      title: "My lips have never felt this soft",
-      comment:
-        "I've tried at least 6 different lip balms this year for constant dryness during AC season. This is the first one where I actually see a difference by day 3 — no more flaking, and the cherry tint looks natural, not fake.",
-      date: "2026-07-08",
-      verified: true,
+    id: "p1",
+    slug: "cherry-blast-lip-balm",
+    name: "Cherry Blast Hydrating Lip Balm",
+    collection: "lip-care",
+    price: 199,
+    compareAtPrice: 399,
+    description:
+      "Meziva's Cherry Blast Hydrating Lip Balm is a deeply nourishing everyday balm built around real cherry extract, Mango Butter, and Vitamin E. It melts into lips instantly, sealing in moisture while a built-in SPF 30 shields against sun damage and pigmentation. With regular use, lips feel visibly smoother, look naturally plump, and carry a soft rosy-red tint that needs no extra lipstick.",
+    howToUse:
+      "Start with clean, dry lips. Swipe the balm evenly across both lips in a single smooth stroke. Reapply whenever lips feel dry, before sun exposure, or after eating/drinking. For best results, use morning and night.",
+    additionalInfo: {
+      "Key Ingredients": "Mango Butter, Vitamin E, Cherry Extract",
+      "SPF": "SPF 30 (Sun Protection)",
+      "Net Weight": "4.5 g",
+      "Finish": "Natural rosy tint, glossy",
+      "Skin Type": "All skin types",
+      "Fragrance": "Cherry",
     },
-    {
-      name: "Rohan T.",
-      rating: 4,
-      title: "Good balm, wish the tube was slightly bigger",
-      comment:
-        "Texture and hydration are genuinely excellent, glides on smooth without being sticky. Only complaint is 4.5g finishes faster than I'd like since I reapply often being outdoors a lot.",
-      date: "2026-06-29",
-      verified: true,
-    },
-    {
-      name: "Simran K.",
-      rating: 5,
-      title: "SPF in a lip balm actually works",
-      comment:
-        "Was skeptical about the SPF 30 claim on something this small, but my lips haven't darkened even after a beach trip where I reapplied every couple hours. Smells like actual cherries, not artificial.",
-      date: "2026-06-14",
-      verified: true,
-    },
-    {
-      name: "Aman D.",
-      rating: 4,
-      title: "Great for cracked winter lips",
-      comment:
-        "Bought this for my badly chapped lips after a cold — took about a week of twice-daily use to fully heal, but the improvement was noticeable from day one itself. Slight cherry taste which I don't mind.",
-      date: "2026-05-30",
-      verified: false,
-    },
-    {
-      name: "Priyanka M.",
-      rating: 5,
-      title: "Repurchased already",
-      comment:
-        "Finished my first tube in about 6 weeks of daily use and ordered two more immediately. The mango butter really does make it feel richer than typical drugstore balms.",
-      date: "2026-05-19",
-      verified: true,
-    },
-  ],
+    images: [
+      "/images/cherry-blast-main.jpg",
+      "/images/cherry-after-before-image.jpg",
+      "/images/cherry-how-to-use.jpg",
+      "/images/cherry-nourishment.jpg",
+      "/images/cherry-why-love-it2.jpg",
+    ],
+    sizes: ["4.5g"],
+    stock: 50,
+    rating: 4.7,
+    reviews: [
+      {
+        name: "Kavya R.",
+        rating: 5,
+        title: "My lips have never felt this soft",
+        comment:
+          "I've tried at least 6 different lip balms this year for constant dryness during AC season. This is the first one where I actually see a difference by day 3 — no more flaking, and the cherry tint looks natural, not fake.",
+        date: "2026-07-08",
+        verified: true,
+      },
+      {
+        name: "Rohan T.",
+        rating: 4,
+        title: "Good balm, wish the tube was slightly bigger",
+        comment:
+          "Texture and hydration are genuinely excellent, glides on smooth without being sticky. Only complaint is 4.5g finishes faster than I'd like since I reapply often being outdoors a lot.",
+        date: "2026-06-29",
+        verified: true,
+      },
+      {
+        name: "Simran K.",
+        rating: 5,
+        title: "SPF in a lip balm actually works",
+        comment:
+          "Was skeptical about the SPF 30 claim on something this small, but my lips haven't darkened even after a beach trip where I reapplied every couple hours. Smells like actual cherries, not artificial.",
+        date: "2026-06-14",
+        verified: true,
+      },
+      {
+        name: "Aman D.",
+        rating: 4,
+        title: "Great for cracked winter lips",
+        comment:
+          "Bought this for my badly chapped lips after a cold — took about a week of twice-daily use to fully heal, but the improvement was noticeable from day one itself. Slight cherry taste which I don't mind.",
+        date: "2026-05-30",
+        verified: false,
+      },
+      {
+        name: "Priyanka M.",
+        rating: 5,
+        title: "Repurchased already",
+        comment:
+          "Finished my first tube in about 6 weeks of daily use and ordered two more immediately. The mango butter really does make it feel richer than typical drugstore balms.",
+        date: "2026-05-19",
+        verified: true,
+      },
+    ],
   },
   {
     id: "p2",
@@ -124,11 +109,12 @@ const productList = [
       "Skin Type": "All skin types",
       "Fragrance": "Mixed Berry",
     },
-    images: ["/images/what-make-it-special.jpg",
-"/images/berry-after-before-image.jpg",
-"/images/how-to-use.jpg",
-"/images/nourishment.jpg"
-
+    images: [
+      "/images/berry-blast-main.jpg",
+      "/images/what-make-it-special.jpg",
+      "/images/berry-after-before-image.jpg",
+      "/images/how-to-use.jpg",
+      "/images/nourishment.jpg",
     ],
     sizes: ["4.5g"],
     stock: 50,
