@@ -11,9 +11,9 @@ import {
 import RouteChangeTracker from "@/components/RouteChangeTracker";
 
 export const metadata = {
-  title: "meziva — Modern Luxury, Made to Last",
+  title: "meziva Beauty — Hydrating Lip Balms with SPF 30",
   description:
-    "Timepieces, leather goods, and fragrance crafted for the long term.",
+    "Cherry Blast and Berry Blast Hydrating Lip Balms — real fruit extracts, Vitamin E, and SPF 30 protection for soft, naturally tinted lips.",
 };
 
 export default function RootLayout({ children }) {
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <CartProvider>
           <Navbar />
           <MiniCart />
-          <main className="min-h-max">{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
         </CartProvider>
       </body>
