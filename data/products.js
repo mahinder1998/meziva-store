@@ -18,6 +18,12 @@ const productList = [
     slug: "cherry-blast-lip-balm",
     name: "Cherry Blast Hydrating Lip Balm",
     collection: "lip-care",
+    // Must match the "Content ID" shown in Meta Commerce Manager > Catalogue
+    // > Products for this item — Meta auto-generated this when the catalog
+    // was created, it does NOT match our internal `id` field above. Pixel
+    // events (ViewContent/AddToCart/Purchase) send THIS value so Meta can
+    // match store activity back to the catalog for dynamic/retargeting ads.
+    metaContentId: "2dunvaol6k",
     price: 199,
     compareAtPrice: 399,
     description:
@@ -95,6 +101,9 @@ const productList = [
     slug: "berry-blast-lip-balm",
     name: "Berry Blast Hydrating Lip Balm",
     collection: "lip-care",
+    // See the note on Cherry Blast above — this must match Meta Commerce
+    // Manager's Content ID for this product, not our internal `id`.
+    metaContentId: "vs60y3tgrq",
     price: 199,
     compareAtPrice: 399,
     description:

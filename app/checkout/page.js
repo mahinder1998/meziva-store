@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
 import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
+import { fbqTrack } from "@/lib/fbpixel";
 
 const SHIPPING_FLAT = 29;
 const FREE_SHIPPING_THRESHOLD = 5000;
@@ -44,6 +45,14 @@ export default function CheckoutPage() {
         items: items.map((item, i) => toGA4Item(item, i)),
       },
     });
+
+    fbqTrack("InitiateCheckout", {
+      value: subtotal,
+      currency: "INR",
+      num_items: items.length,
+      content_ids: items.map((item) => item.metaContentId || item.id),
+      content_type: "product",
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -58,6 +67,13 @@ export default function CheckoutPage() {
         payment_type: method,
         items: items.map((item, i) => toGA4Item(item, i)),
       },
+    });
+
+    fbqTrack("Purchase", {
+      value: total,
+      currency: "INR",
+      content_ids: items.map((item) => item.metaContentId || item.id),
+      content_type: "product",
     });
   }
 

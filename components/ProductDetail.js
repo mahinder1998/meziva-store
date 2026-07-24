@@ -7,6 +7,7 @@ import { formatPrice } from "@/data/products";
 import ProductTabs from "@/components/ProductTabs";
 import RelatedProducts from "@/components/RelatedProducts";
 import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
+import { fbqTrack } from "@/lib/fbpixel";
 
 export default function ProductDetail({ product, relatedProducts = [], reviews }) {
   const { addItem } = useCart();
@@ -35,6 +36,14 @@ export default function ProductDetail({ product, relatedProducts = [], reviews }
         ],
       },
     });
+
+    fbqTrack("ViewContent", {
+      content_ids: [product.metaContentId || product.id],
+      content_type: "product",
+      content_name: product.name,
+      value: product.price,
+      currency: "INR",
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
 
@@ -50,6 +59,14 @@ export default function ProductDetail({ product, relatedProducts = [], reviews }
         value: product.price * qty,
         items: [toGA4Item({ id: product.id, name: product.name, size, price: product.price, qty }, 0)],
       },
+    });
+
+    fbqTrack("AddToCart", {
+      content_ids: [product.metaContentId || product.id],
+      content_type: "product",
+      content_name: product.name,
+      value: product.price * qty,
+      currency: "INR",
     });
   }
 

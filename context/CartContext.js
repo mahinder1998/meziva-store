@@ -45,6 +45,7 @@ export function CartProvider({ children }) {
         {
           key,
           id: product.id,
+          metaContentId: product.metaContentId,
           slug: product.slug,
           name: product.name,
           price: product.price,
