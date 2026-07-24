@@ -1,9 +1,9 @@
 import { requireAdminSession } from "@/lib/adminAuth";
 import { getAllOrders } from "@/lib/orders";
 import { formatPrice } from "@/data/products";
-import LogoutButton from "@/components/admin/LogoutButton";
+import AdminNav from "@/components/admin/AdminNav";
 
-export const dynamic = "force-dynamic"; // always read the latest orders.json, never cache
+export const dynamic = "force-dynamic"; // always read the latest orders, never cache
 
 export default async function AdminOrdersPage() {
   requireAdminSession();
@@ -13,12 +13,13 @@ export default async function AdminOrdersPage() {
   return (
     <div className="min-h-screen bg-[#FBFBF9] py-10">
       <div className="container-x">
+        <AdminNav active="Orders" />
+
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl">Orders</h1>
             <p className="text-sm text-charcoal/60">{orders.length} total</p>
           </div>
-          <LogoutButton />
         </div>
 
         {orders.length === 0 ? (

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
-import { formatPrice } from "@/data/products";
+import { formatPrice } from "@/lib/format";
 import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
 
 export default function CartPage() {

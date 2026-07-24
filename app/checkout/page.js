@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { formatPrice } from "@/data/products";
+import { formatPrice } from "@/lib/format";
 import { pushToDataLayer, toGA4Item } from "@/lib/gtm";
 import { fbqTrack } from "@/lib/fbpixel";
 

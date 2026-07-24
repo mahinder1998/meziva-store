@@ -2,14 +2,12 @@ import ProductCard from "@/components/ProductCard";
 import {
   getCollectionBySlug,
   getProductsByCollection,
-  getAllCollections,
 } from "@/data/products";
 import { notFound } from "next/navigation";
 
-export async function generateStaticParams() {
-  const collections = await getAllCollections();
-  return collections.map((c) => ({ slug: c.slug }));
-}
+// Same reasoning as the product page — rendered fresh per request so
+// admin-panel product changes appear immediately.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const collection = await getCollectionBySlug(params.slug);

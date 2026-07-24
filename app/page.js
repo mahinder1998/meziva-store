@@ -3,6 +3,10 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { getFeaturedProducts, getAllCollections } from "@/data/products";
 
+// Rendered fresh per request — homepage shows admin-panel product changes
+// immediately, no redeploy needed.
+export const dynamic = "force-dynamic";
+
 
 export default async function HomePage() {
   const featured = await getFeaturedProducts(4);

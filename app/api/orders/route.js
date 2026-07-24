@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { createShiprocketOrder } from "@/lib/shiprocket";
 import { addOrder, getNextOrderNumber } from "@/lib/orders";
-import { sendOrderEmailAlert } from "@/lib/notifications";
+import { sendOrderEmailAlert, sendOrderWhatsAppAlert } from "@/lib/notifications";
 
 // POST /api/orders — create a new order (COD or paid)
 export async function POST(req) {
@@ -42,14 +42,20 @@ export async function POST(req) {
 
     await addOrder(order);
 
-    // Notify the store owner by email. Same rule as Shiprocket above: this
-    // must NEVER fail or delay the customer's order — if email sending is
-    // down or misconfigured, the order is still saved and the customer
-    // still sees "order placed".
+    // Notify the store owner — email + WhatsApp. Same rule as Shiprocket
+    // above: these must NEVER fail or delay the customer's order. Each is
+    // wrapped separately so one failing (e.g. email misconfigured) doesn't
+    // stop the other from sending.
     try {
       await sendOrderEmailAlert(order);
     } catch (emailErr) {
       console.error("Order email alert failed:", emailErr.message);
+    }
+
+    try {
+      await sendOrderWhatsAppAlert(order);
+    } catch (waErr) {
+      console.error("Order WhatsApp alert failed:", waErr.message);
     }
 
     return NextResponse.json({ success: true, order });

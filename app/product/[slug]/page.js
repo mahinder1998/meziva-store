@@ -1,16 +1,16 @@
 import {
   getProductBySlug,
-  getAllProducts,
   getRelatedProducts,
 } from "@/data/products";
-import { getReviewsForProduct } from "@/lib/reviews";
 import ProductDetail from "@/components/ProductDetail";
 import { notFound } from "next/navigation";
 
-export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((p) => ({ slug: p.slug }));
-}
+// Products now live in a database and can change any time from the admin
+// panel (price edits, new products, stock updates) — so these pages are
+// rendered fresh on every request instead of being pre-built at deploy
+// time. That way an admin edit shows up immediately, with no redeploy
+// needed.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const product = await getProductBySlug(params.slug);
@@ -27,16 +27,11 @@ export default async function ProductPage({ params }) {
 
   const relatedProducts = await getRelatedProducts(product, 4);
 
-  const userReviews = await getReviewsForProduct(product.slug);
-  const reviews = [...userReviews, ...(product.reviews || [])].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  );
-
   return (
     <ProductDetail
       product={product}
       relatedProducts={relatedProducts}
-      reviews={reviews}
+      reviews={product.reviews}
     />
   );
 }
