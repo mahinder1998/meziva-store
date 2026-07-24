@@ -8,6 +8,7 @@ import {
   GoogleTagManagerHead,
   GoogleTagManagerBody,
 } from "@/components/GoogleTagManager";
+import { FacebookPixelHead, FacebookPixelBody } from "@/components/FacebookPixel";
 import RouteChangeTracker from "@/components/RouteChangeTracker";
 
 export const metadata = {
@@ -21,9 +22,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <GoogleTagManagerHead />
+        <FacebookPixelHead />
       </head>
       <body className="font-sans antialiased">
         <GoogleTagManagerBody />
+        <FacebookPixelBody />
         <Suspense fallback={null}>
           <RouteChangeTracker />
         </Suspense>
