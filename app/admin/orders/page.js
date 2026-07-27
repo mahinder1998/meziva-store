@@ -72,6 +72,18 @@ export default async function AdminOrdersPage() {
                         {order.status}
                       </span>
                     </p>
+                    {order.paymentMethod === "COD" &&
+                      (order.razorpay?.type === "cod_advance" ? (
+                        <p className="text-xs text-emerald-700 mt-1">
+                          ✓ ₹{order.razorpay.amount} advance verified — collect{" "}
+                          {formatPrice(order.razorpay.remaining)} cash on
+                          delivery
+                        </p>
+                      ) : (
+                        <p className="text-xs text-red-600 mt-1">
+                          ⚠ No verified advance on this order
+                        </p>
+                      ))}
                   </div>
 
                   <div>

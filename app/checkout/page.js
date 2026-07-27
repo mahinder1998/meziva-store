@@ -11,6 +11,14 @@ import { fbqTrack } from "@/lib/fbpixel";
 const SHIPPING_FLAT = 29;
 const FREE_SHIPPING_THRESHOLD = 5000;
 
+// COD orders require this much to be paid upfront via Razorpay before the
+// order is confirmed — filters out fake/prank COD orders. It's adjusted
+// against the order total, not charged extra; the rest is still cash on
+// delivery. Kept in sync with COD_ADVANCE_AMOUNT in app/api/orders/route.js
+// (that server-side value is what's actually enforced — this one is just
+// for displaying the right numbers to the customer).
+const COD_ADVANCE = 19;
+
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const router = useRouter();
@@ -30,6 +38,7 @@ export default function CheckoutPage() {
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT;
   const total = subtotal + shipping;
+  const codRemaining = Math.max(total - COD_ADVANCE, 0);
 
   // Safety net: fires begin_checkout if someone lands directly on
   // /checkout (bookmark, back button) without clicking the button in
@@ -118,19 +127,123 @@ export default function CheckoutPage() {
     return res.json();
   }
 
+  // Shared Razorpay Checkout flow: creates a Razorpay order for `amount`,
+  // opens the payment popup, and verifies the signature server-side once
+  // paid. Resolves with the verified { razorpay_order_id,
+  // razorpay_payment_id, razorpay_signature } response, or null if the
+  // customer cancelled or payment/verification failed (onError is called
+  // with a message in that case).
+  function payWithRazorpay({ amount, description, onError }) {
+    return new Promise(async (resolve) => {
+      try {
+        const orderRes = await fetch("/api/razorpay/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount }),
+        });
+        const orderData = await orderRes.json();
+
+        if (!orderData.order) {
+          onError("Could not initiate payment. Please try again.");
+          resolve(null);
+          return;
+        }
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: orderData.order.amount,
+          currency: "INR",
+          name: "meziva",
+          description,
+          order_id: orderData.order.id,
+          prefill: {
+            name: form.name,
+            email: form.email,
+            contact: form.phone,
+          },
+          theme: { color: "#111111" },
+          handler: async function (response) {
+            const verifyRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(response),
+            });
+            const verifyData = await verifyRes.json();
+
+            if (verifyData.verified) {
+              resolve(response);
+            } else {
+              onError(
+                "Payment verification failed. If money was deducted, contact support."
+              );
+              resolve(null);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              resolve(null);
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (response) {
+          console.error("Razorpay payment failed:", response.error);
+          onError(
+            `Payment failed: ${response.error.description || "Please try again."}`
+          );
+          resolve(null);
+        });
+        rzp.open();
+      } catch (err) {
+        console.error(err);
+        onError("Something went wrong. Please try again.");
+        resolve(null);
+      }
+    });
+  }
+
   async function handleCOD() {
     if (!validateForm()) return;
     setLoading(true);
+    setError("");
+
+    // Step 1: collect the ₹19 advance via Razorpay first. The order is
+    // only saved after this is paid and verified — a customer can't get a
+    // COD order created without it.
+    const advanceResponse = await payWithRazorpay({
+      amount: COD_ADVANCE,
+      description: `COD order advance (₹${COD_ADVANCE}, adjusted in your total — pay ${formatPrice(
+        codRemaining
+      )} in cash on delivery)`,
+      onError: setError,
+    });
+
+    if (!advanceResponse) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await saveOrder();
+      const result = await saveOrder({
+        codAdvance: {
+          amount: COD_ADVANCE,
+          razorpay_order_id: advanceResponse.razorpay_order_id,
+          razorpay_payment_id: advanceResponse.razorpay_payment_id,
+          razorpay_signature: advanceResponse.razorpay_signature,
+        },
+      });
+
       if (result.success) {
         pushPurchaseEvent(result.order.id, "COD");
         clearCart();
         router.push(
-          `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=COD`
+          `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=COD&advance=${COD_ADVANCE}&remaining=${codRemaining}`
         );
       } else {
-        setError("Something went wrong placing your order. Try again.");
+        setError(
+          result.error || "Something went wrong placing your order. Try again."
+        );
       }
     } catch (err) {
       console.error(err);
@@ -145,79 +258,28 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
 
+    const response = await payWithRazorpay({
+      amount: total,
+      description: "Order Payment",
+      onError: setError,
+    });
+
+    if (!response) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      // 1. Create order on server
-      const orderRes = await fetch("/api/razorpay/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total }),
-      });
-      const orderData = await orderRes.json();
-
-      if (!orderData.order) {
-        setError("Could not initiate payment. Please try again.");
-        setLoading(false);
-        return;
-      }
-
-      // 2. Open Razorpay Checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: orderData.order.amount,
-        currency: "INR",
-        name: "meziva",
-        description: "Order Payment",
-        order_id: orderData.order.id,
-        prefill: {
-          name: form.name,
-          email: form.email,
-          contact: form.phone,
-        },
-        theme: { color: "#111111" },
-        handler: async function (response) {
-          // 3. Verify payment signature on server
-          const verifyRes = await fetch("/api/razorpay/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          });
-          const verifyData = await verifyRes.json();
-
-          if (verifyData.verified) {
-            const result = await saveOrder({
-              razorpay: response,
-            });
-            pushPurchaseEvent(result.order.id, "RAZORPAY");
-            clearCart();
-            router.push(
-              `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=RAZORPAY`
-            );
-          } else {
-            setError(
-              "Payment verification failed. If money was deducted, contact support."
-            );
-          }
-          setLoading(false);
-        },
-        modal: {
-          ondismiss: function () {
-            setLoading(false);
-          },
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function (response) {
-        console.error("Razorpay payment failed:", response.error);
-        setError(
-          `Payment failed: ${response.error.description || "Please try again."}`
-        );
-        setLoading(false);
-      });
-      rzp.open();
+      const result = await saveOrder({ razorpay: response });
+      pushPurchaseEvent(result.order.id, "RAZORPAY");
+      clearCart();
+      router.push(
+        `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=RAZORPAY`
+      );
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
     }
   }
@@ -324,7 +386,7 @@ export default function CheckoutPage() {
                 </div>
               </label>
               <label
-                className={`flex items-center gap-3 border px-4 py-4 cursor-pointer ${
+                className={`flex items-start gap-3 border px-4 py-4 cursor-pointer ${
                   paymentMethod === "COD" ? "border-charcoal" : "border-black/15"
                 }`}
               >
@@ -333,11 +395,18 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   checked={paymentMethod === "COD"}
                   onChange={() => setPaymentMethod("COD")}
+                  className="mt-1"
                 />
                 <div>
                   <p className="text-sm font-medium">Cash on Delivery</p>
                   <p className="text-xs text-charcoal/50">
                     Pay in cash when your order arrives
+                  </p>
+                  <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1.5 mt-2 inline-block">
+                    ₹{COD_ADVANCE} advance payable now (via UPI/Card, powered
+                    by Razorpay) to confirm this order — this is part of
+                    your total, not extra. Remaining{" "}
+                    {formatPrice(codRemaining)} payable in cash on delivery.
                   </p>
                 </div>
               </label>
@@ -354,7 +423,7 @@ export default function CheckoutPage() {
             {loading
               ? "Processing..."
               : paymentMethod === "COD"
-              ? "Place Order (COD)"
+              ? `Pay ₹${COD_ADVANCE} Advance & Confirm Order (COD)`
               : `Pay ${formatPrice(total)}`}
           </button>
         </form>
@@ -387,6 +456,18 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
+              {paymentMethod === "COD" && (
+                <div className="border-t border-black/10 pt-3 space-y-1 text-xs text-charcoal/60">
+                  <div className="flex justify-between">
+                    <span>Pay now (advance, online)</span>
+                    <span>{formatPrice(COD_ADVANCE)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Pay on delivery (cash)</span>
+                    <span>{formatPrice(codRemaining)}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

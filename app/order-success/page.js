@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { formatPrice } from "@/lib/format";
 
 function OrderSuccessContent() {
   const params = useSearchParams();
   const orderId = params.get("orderId");
   const orderNumber = params.get("orderNumber");
   const method = params.get("method");
+  const advance = params.get("advance");
+  const remaining = params.get("remaining");
 
   return (
     <div className="container-x py-24 text-center max-w-lg mx-auto">
@@ -28,9 +31,20 @@ function OrderSuccessContent() {
         </p>
       )}
       {method === "COD" && (
-        <p className="text-sm text-charcoal/60 mb-8">
-          Please keep exact cash ready at the time of delivery.
-        </p>
+        <div className="text-sm text-left bg-amber-50 border border-amber-200 px-5 py-4 mb-8 space-y-1">
+          {advance && (
+            <p className="text-emerald-700">
+              ✓ ₹{advance} advance received — your order is confirmed.
+            </p>
+          )}
+          {remaining && (
+            <p className="text-charcoal/70">
+              Please keep{" "}
+              <span className="font-medium">{formatPrice(Number(remaining))}</span>{" "}
+              in exact cash ready at the time of delivery.
+            </p>
+          )}
+        </div>
       )}
       <Link href="/" className="btn-primary inline-block">
         Continue Shopping
