@@ -61,9 +61,9 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-black/10 bg-[#FBFBF9] p-6 mb-8 space-y-4"
+      className="border border-charcoal/10 bg-cream p-6 md:p-8 mb-10 space-y-5"
     >
-      <h3 className=" text-lg">Write a Review</h3>
+      <h3 className="font-serif text-xl text-charcoal">Write a Review</h3>
 
       {/* Star picker */}
       <div>
@@ -78,13 +78,13 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
               onClick={() => setRating(star)}
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
-              className="text-2xl leading-none px-0.5"
+              className="text-2xl leading-none px-0.5 transition-transform duration-150 hover:scale-110"
               aria-label={`${star} star`}
             >
               <span
                 className={
                   (hoverRating || rating) >= star
-                    ? "text-amber-500"
+                    ? "text-gold"
                     : "text-charcoal/20"
                 }
               >
@@ -102,7 +102,7 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={60}
-          className="border border-black/20 px-4 py-3 text-sm bg-white"
+          className="border border-charcoal/20 px-4 py-3 text-sm bg-white focus:outline-none focus:border-charcoal transition-colors"
         />
         <input
           type="text"
@@ -110,7 +110,7 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={100}
-          className="border border-black/20 px-4 py-3 text-sm bg-white"
+          className="border border-charcoal/20 px-4 py-3 text-sm bg-white focus:outline-none focus:border-charcoal transition-colors"
         />
       </div>
 
@@ -120,7 +120,7 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
         onChange={(e) => setComment(e.target.value)}
         maxLength={1000}
         rows={4}
-        className="w-full border border-black/20 px-4 py-3 text-sm bg-white resize-none"
+        className="w-full border border-charcoal/20 px-4 py-3 text-sm bg-white resize-none focus:outline-none focus:border-charcoal transition-colors"
       />
 
       {error && (
@@ -129,14 +129,14 @@ export default function ReviewForm({ productSlug, onSubmitted, onCancel }) {
         </p>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex items-center gap-5">
         <button type="submit" disabled={loading} className="btn-primary">
           {loading ? "Submitting..." : "Submit Review"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="text-sm text-charcoal/60 underline"
+          className="text-sm text-charcoal/60 hover:text-charcoal underline underline-offset-2 transition-colors"
         >
           Cancel
         </button>
