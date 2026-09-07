@@ -10,39 +10,49 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    // { href: "/collection/watches", label: "Timepieces" },
-    // { href: "/collection/bags", label: "Leather Goods" },
-    // { href: "/collection/fragrance", label: "Fragrance" },
+    { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-white backdrop-blur">
       <div className="container-x flex items-center justify-between h-20">
         {/* Mobile menu button */}
-        {/* <button
+        <button
           className="md:hidden text-charcoal"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Toggle menu"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M4 6h16M4 12h16M4 18h16"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </button> */}
+          {menuOpen ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            </svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            </svg>
+          )}
+        </button>
 
         <Link
           href="/"
-          className=" text-2xl tracking-widest2 text-charcoal"
+          className="relative w-[120px] h-[40px] text-2xl tracking-widest2 text-charcoal"
         >
           <Image
             src="/images/meziva-logo-final.png"
             alt="meziva"
             fill
             sizes="130px"
-            className="object-contain !relative !w-[120px] !h-auto"
+            className="object-contain"
           />
         </Link>
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import HeroBanner from "@/components/HeroBanner";
 import { getFeaturedProducts, getAllCollections } from "@/data/products";
 
 // Rendered fresh per request — homepage shows admin-panel product changes
@@ -15,31 +16,7 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero */}
-      {/* <section className="relative h-[85vh] min-h-[560px] w-full overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80"
-          alt="meziva hero"
-          fill
-          priority
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/35 flex items-center">
-          <div className="container-x">
-            <p className="text-white/80 text-xs uppercase tracking-widest2 mb-4">
-              New Season
-            </p>
-            <h1 className=" text-white text-5xl md:text-7xl max-w-xl leading-tight">
-              Crafted to outlast the trend.
-            </h1>
-            <Link
-              href="/collection/watches"
-              className="inline-block mt-8 btn-primary bg-white text-charcoal hover:bg-gold hover:text-white"
-            >
-              Shop Timepieces
-            </Link>
-          </div>
-        </div>
-      </section> */}
+      <HeroBanner />
 
       {/* Collections */}
       {/* <section className="container-x py-20">
