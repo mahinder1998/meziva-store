@@ -7,15 +7,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        gold: "#b8935f",
-        charcoal: "#111111",
-        cream: "#f7f4ef",
+        gold: "#9C7A4C",
+        charcoal: "#1C1512",
+        cream: "#F3EAE2",
+        wine: "#7A2E3A",
+        blush: "#E8D2C9",
       },
       fontFamily: {
-        serif: ["Georgia", "Cambria", "Times New Roman", "serif"],
+        serif: ["var(--font-display)", "Georgia", "Cambria", "serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         widest2: "0.25em",
+        widest3: "0.35em",
       },
     },
   },

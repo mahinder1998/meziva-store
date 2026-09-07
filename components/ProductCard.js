@@ -20,35 +20,44 @@ export default function ProductCard({ product }) {
     });
   }
 
+  const discountPercent = product.compareAtPrice
+    ? Math.round(
+        ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100
+      )
+    : null;
+
   return (
     <Link
       href={`/product/${product.slug}`}
       onClick={handleClick}
       className="group block"
     >
-      <div className="relative w-full aspect-[4/4] bg-white overflow-hidden">
+      <div className="relative w-full aspect-[4/4] bg-white overflow-hidden border border-charcoal/10 group-hover:border-charcoal/20 transition-colors duration-300">
         <Image
           src={product.images[0]}
           alt={product.name}
           fill
           sizes="(max-width: 768px) 50vw, 25vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
         />
-        {product.compareAtPrice && (
-          <span className="absolute top-3 left-3 bg-charcoal text-white text-[10px] uppercase tracking-widest2 px-2 py-1">
-            Sale
+        {discountPercent && (
+          <span className="absolute top-3 left-3 bg-wine text-white text-[10px] font-medium uppercase tracking-widest2 px-2.5 py-1.5">
+            {discountPercent}% Off
           </span>
         )}
       </div>
-      <div className="mt-4 md:flex items-start justify-between">
+
+      <div className="mt-5 md:flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-charcoal">{product.name}</p>
+          <p className="font-serif text-base text-charcoal leading-snug">
+            {product.name}
+          </p>
           {/* <p className="text-xs text-charcoal/50 mt-1 capitalize">
             {product.collection}
           </p> */}
         </div>
-        <div className="md:text-right mt-2 md:mt-0">
-          <p className="text-lg font-medium text-charcoal">
+        <div className="flex items-baseline gap-2 md:flex-col md:items-end mt-2 md:mt-0 shrink-0">
+          <p className="text-base font-medium text-charcoal">
             {formatPrice(product.price)}
           </p>
           {product.compareAtPrice && (

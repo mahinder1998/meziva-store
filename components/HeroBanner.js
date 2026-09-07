@@ -12,8 +12,9 @@ const slides = [
     desktopImage: "/images/hero/hero-desktop-1.jpg",
     mobileImage: "/images/hero/hero-mobile-1.jpg",
     alt: "Meziva Hydrating Lip Balm - SPF 30 Protection",
-    heading: "Lip Care Made for Indian Summers",
-    subheading: "SPF 30 | Mango Butter | Vitamin E",
+    eyebrow: "New Season",
+    heading: "Lip care made for Indian summers",
+    subheading: "SPF 30 · Mango Butter · Vitamin E",
     ctaText: "Shop Now",
     ctaLink: "/shop",
   },
@@ -22,8 +23,9 @@ const slides = [
     desktopImage: "/images/hero/hero-desktop-2.jpg",
     mobileImage: "/images/hero/hero-mobile-2.jpg",
     alt: "Meziva Berry Blast Lip Balm",
-    heading: "New: Berry Blast Flavour",
-    subheading: "Deeply Nourishing. Naturally Tinted.",
+    eyebrow: "Just Launched",
+    heading: "Berry Blast has arrived",
+    subheading: "Deeply nourishing, naturally tinted",
     ctaText: "Explore",
     ctaLink: "/shop",
   },
@@ -84,19 +86,25 @@ export default function HeroBanner() {
               />
             </div>
 
-            {/* Overlay content */}
-            <div className="absolute inset-0 bg-black/20 flex items-center">
+            {/* Gradient overlay for legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
+
+            {/* Content */}
+            <div className="absolute inset-0 flex items-end md:items-center pb-16 md:pb-0">
               <div className="container-x">
-                <div className="max-w-md text-white">
-                  <h1 className="text-3xl md:text-5xl font-semibold mb-3">
+                <div className="max-w-lg text-white">
+                  <p className="text-xs md:text-sm uppercase tracking-widest3 text-white/80 mb-3">
+                    {slide.eyebrow}
+                  </p>
+                  <h1 className="font-serif text-4xl md:text-6xl leading-[1.1] mb-4">
                     {slide.heading}
                   </h1>
-                  <p className="text-sm md:text-lg mb-6 opacity-90">
+                  <p className="text-sm md:text-base tracking-widest2 uppercase text-white/85 mb-8">
                     {slide.subheading}
                   </p>
                   <Link
                     href={slide.ctaLink}
-                    className="inline-block bg-white text-charcoal px-6 py-3 text-sm uppercase tracking-widest2 hover:bg-gold hover:text-white transition-colors"
+                    className="inline-block border border-white px-8 py-3 text-sm uppercase tracking-widest2 text-white hover:bg-wine hover:border-wine transition-colors duration-300"
                   >
                     {slide.ctaText}
                   </Link>
@@ -112,7 +120,7 @@ export default function HeroBanner() {
             <button
               onClick={goToPrev}
               aria-label="Previous slide"
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-charcoal w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+              className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-wine hover:text-white text-charcoal w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
@@ -127,7 +135,7 @@ export default function HeroBanner() {
             <button
               onClick={goToNext}
               aria-label="Next slide"
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-charcoal w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+              className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-wine hover:text-white text-charcoal w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
@@ -144,16 +152,16 @@ export default function HeroBanner() {
 
         {/* Dots - only if multiple slides */}
         {hasMultipleSlides && (
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5">
             {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrent(index)}
                 aria-label={`Go to slide ${index + 1}`}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-[3px] rounded-full transition-all duration-300 ${
                   index === current
-                    ? "w-6 bg-white"
-                    : "w-2 bg-white/50 hover:bg-white/80"
+                    ? "w-8 bg-white"
+                    : "w-4 bg-white/50 hover:bg-white/80"
                 }`}
               />
             ))}
