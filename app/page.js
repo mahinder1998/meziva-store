@@ -137,7 +137,7 @@ export default async function HomePage() {
       </section>
 
       {/* Testimonials — REPLACE with real customer reviews as soon as you have them */}
-      <section className="bg-cream py-16 md:py-24 border-t border-charcoal/10">
+      {/* <section className="bg-cream py-16 md:py-24 border-t border-charcoal/10">
         <div className="container-x">
           <div className="text-center mb-12 md:mb-16">
             <p className="text-xs uppercase tracking-widest3 text-wine mb-3">
@@ -187,10 +187,10 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* FAQ — kills last-minute checkout doubt */}
-      <section className="bg-white py-16 md:py-20 border-t border-charcoal/10">
+      {/* <section className="bg-white py-16 md:py-20 border-t border-charcoal/10">
         <div className="container-x max-w-2xl">
           <div className="text-center mb-10 md:mb-12">
             <h2 className="font-serif text-2xl md:text-3xl text-charcoal">
@@ -233,7 +233,7 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
