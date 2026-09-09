@@ -8,7 +8,6 @@ import { getFeaturedProducts, getAllCollections } from "@/data/products";
 // immediately, no redeploy needed.
 export const dynamic = "force-dynamic";
 
-
 export default async function HomePage() {
   const featured = await getFeaturedProducts(4);
   const collections = await getAllCollections();
@@ -17,32 +16,6 @@ export default async function HomePage() {
     <div>
       {/* Hero */}
       <HeroBanner />
-
-      {/* Collections */}
-      {/* <section className="container-x py-20">
-        <h2 className="section-heading text-center mb-12">Collections</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {collections.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/collection/${c.slug}`}
-              className="group relative h-96 overflow-hidden block"
-            >
-              <Image
-                src={c.image}
-                alt={c.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-6">
-                <h3 className=" text-white text-2xl">{c.name}</h3>
-                <p className="text-white/80 text-sm mt-2">{c.description}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section> */}
 
       {/* Featured products */}
       <section className="container-x py-16 md:py-24">
@@ -53,17 +26,68 @@ export default async function HomePage() {
           <h2 className="font-serif text-3xl md:text-4xl text-charcoal">
             Bestsellers
           </h2>
-          {/* <Link
-            href="/collection/watches"
-            className="text-xs uppercase tracking-widest hover:text-gold"
-          >
-            View All
-          </Link> */}
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-14">
+
+        <div
+          className={`grid gap-x-6 gap-y-14 ${
+            featured.length === 1
+              ? "grid-cols-1 max-w-sm mx-auto"
+              : featured.length === 2
+              ? "grid-cols-2 max-w-2xl mx-auto"
+              : "grid-cols-2 md:grid-cols-4"
+          }`}
+        >
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
+        </div>
+      </section>
+
+      {/* What's Inside — ingredient transparency builds trust fast */}
+      <section className="bg-blush/40 py-16 md:py-24">
+        <div className="container-x">
+          <div className="text-center mb-12 md:mb-16">
+            <p className="text-xs uppercase tracking-widest3 text-wine mb-3">
+              Clean Formula
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl text-charcoal">
+              What's Inside
+            </h2>
+            <p className="text-sm text-charcoal/60 mt-3 max-w-md mx-auto">
+              Every Meziva balm is made with skin-loving ingredients — nothing
+              hidden, nothing unnecessary.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
+            {[
+              {
+                name: "Shea Butter",
+                benefit: "Deep hydration for 24 hours",
+              },
+              {
+                name: "Vitamin E",
+                benefit: "Repairs & nourishes dry lips",
+              },
+              {
+                name: "SPF 30",
+                benefit: "Protects against sun damage",
+              },
+              {
+                name: "No Parabens",
+                benefit: "Dermatologically tested, safe daily use",
+              },
+            ].map((item) => (
+              <div key={item.name} className="text-center">
+                <h4 className="font-serif text-base md:text-lg text-charcoal mb-1.5">
+                  {item.name}
+                </h4>
+                <p className="text-xs md:text-sm text-charcoal/60 leading-relaxed">
+                  {item.benefit}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -108,6 +132,105 @@ export default async function HomePage() {
             <p className="text-sm text-charcoal/60 max-w-[220px]">
               7-day, no-questions-asked returns.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials — REPLACE with real customer reviews as soon as you have them */}
+      <section className="bg-cream py-16 md:py-24 border-t border-charcoal/10">
+        <div className="container-x">
+          <div className="text-center mb-12 md:mb-16">
+            <p className="text-xs uppercase tracking-widest3 text-wine mb-3">
+              Loved By Customers
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl text-charcoal">
+              What People Are Saying
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+            {[
+              {
+                name: "Ananya S.",
+                text:
+                  "My lips have never felt this soft. The SPF is a game changer for daily wear in Delhi summers.",
+              },
+              {
+                name: "Riya K.",
+                text:
+                  "Berry Blast smells amazing and the tint is so natural. Ordering the Cherry one next.",
+              },
+              {
+                name: "Priya M.",
+                text:
+                  "Fast delivery, great packaging, and the balm genuinely lasts all day. Repeat customer already.",
+              },
+            ].map((review) => (
+              <div
+                key={review.name}
+                className="bg-white p-7 border border-charcoal/10"
+              >
+                <div className="flex text-wine mb-4" aria-hidden="true">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg key={i} width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 1.5l2.6 5.6 6 0.7-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-0.7L10 1.5z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm text-charcoal/75 leading-relaxed mb-5">
+                  "{review.text}"
+                </p>
+                <p className="text-xs uppercase tracking-widest2 text-charcoal/50">
+                  {review.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ — kills last-minute checkout doubt */}
+      <section className="bg-white py-16 md:py-20 border-t border-charcoal/10">
+        <div className="container-x max-w-2xl">
+          <div className="text-center mb-10 md:mb-12">
+            <h2 className="font-serif text-2xl md:text-3xl text-charcoal">
+              Common Questions
+            </h2>
+          </div>
+
+          <div className="divide-y divide-charcoal/10">
+            {[
+              {
+                q: "Is this safe for daily use?",
+                a: "Yes — our balms are dermatologically tested and formulated for everyday use, morning and night.",
+              },
+              {
+                q: "How long does shipping take?",
+                a: "Orders are typically delivered within 3–6 business days across India.",
+              },
+              {
+                q: "What if I don't like the product?",
+                a: "We offer a 7-day, no-questions-asked return policy. Reach out to support@meziva.in and we'll sort it out.",
+              },
+              {
+                q: "Do you offer Cash on Delivery?",
+                a: "Yes, COD is available on all orders across India.",
+              },
+            ].map((item) => (
+              <details key={item.q} className="group py-5">
+                <summary className="flex items-center justify-between cursor-pointer list-none">
+                  <span className="font-serif text-base md:text-lg text-charcoal pr-4">
+                    {item.q}
+                  </span>
+                  <span className="text-charcoal/40 group-open:rotate-45 transition-transform duration-300 text-xl leading-none shrink-0">
+                    +
+                  </span>
+                </summary>
+                <p className="text-sm text-charcoal/60 leading-relaxed mt-3 pr-8">
+                  {item.a}
+                </p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

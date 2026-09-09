@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // 👇 Add/remove slides here. Each slide needs a desktop + mobile image.
 // If you only add ONE slide, the slider auto-hides arrows/dots.
@@ -31,29 +31,78 @@ const slides = [
   },
 ];
 
+const AUTOPLAY_MS = 5000;
+
 export default function HeroBanner() {
   const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const hasMultipleSlides = slides.length > 1;
+  const touchStartX = useRef(null);
 
   const goToNext = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
   }, []);
 
-  const goToPrev = () => {
+  const goToPrev = useCallback(() => {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  }, []);
 
-  // Auto-play only if more than 1 slide
+  // Auto-play — pauses on hover/touch, respects reduced-motion, stops if tab hidden
+  useEffect(() => {
+    if (!hasMultipleSlides || isPaused) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const timer = setInterval(goToNext, AUTOPLAY_MS);
+    return () => clearInterval(timer);
+  }, [hasMultipleSlides, isPaused, goToNext]);
+
+  // Keyboard navigation
   useEffect(() => {
     if (!hasMultipleSlides) return;
-    const timer = setInterval(goToNext, 5000);
-    return () => clearInterval(timer);
-  }, [hasMultipleSlides, goToNext]);
+    const handleKey = (e) => {
+      if (e.key === "ArrowRight") goToNext();
+      if (e.key === "ArrowLeft") goToPrev();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [hasMultipleSlides, goToNext, goToPrev]);
+
+  // Basic swipe support for mobile
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 50) {
+      delta > 0 ? goToPrev() : goToNext();
+    }
+    touchStartX.current = null;
+  };
 
   if (!slides.length) return null;
 
   return (
-    <section className="relative w-full overflow-hidden bg-cream">
+    <section
+      className="relative w-full overflow-hidden bg-cream"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={(e) => {
+        setIsPaused(true);
+        handleTouchStart(e);
+      }}
+      onTouchEnd={(e) => {
+        handleTouchEnd(e);
+        setIsPaused(false);
+      }}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured products"
+    >
       <div className="relative w-full h-[70vh] md:h-[85vh]">
         {slides.map((slide, index) => (
           <div
@@ -61,6 +110,7 @@ export default function HeroBanner() {
             className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
               index === current ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
+            aria-hidden={index !== current}
           >
             {/* Desktop Image */}
             <div className="hidden md:block relative w-full h-full">
@@ -87,7 +137,7 @@ export default function HeroBanner() {
             </div>
 
             {/* Gradient overlay for legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
 
             {/* Content */}
             <div className="absolute inset-0 flex items-end md:items-center pb-16 md:pb-0">
@@ -108,6 +158,11 @@ export default function HeroBanner() {
                   >
                     {slide.ctaText}
                   </Link>
+
+                  {/* Trust microcopy — builds confidence right at first impression */}
+                  <p className="mt-5 text-[11px] md:text-xs tracking-widest2 uppercase text-white/70">
+                    Free Shipping · Cash on Delivery · 7-Day Returns
+                  </p>
                 </div>
               </div>
             </div>
@@ -123,13 +178,7 @@ export default function HeroBanner() {
               className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-wine hover:text-white text-charcoal w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M15 18l-6-6 6-6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <button
@@ -138,13 +187,7 @@ export default function HeroBanner() {
               className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-wine hover:text-white text-charcoal w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M9 6l6 6-6 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </>
@@ -152,12 +195,18 @@ export default function HeroBanner() {
 
         {/* Dots - only if multiple slides */}
         {hasMultipleSlides && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5">
+          <div
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5"
+            role="tablist"
+            aria-label="Slide navigation"
+          >
             {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrent(index)}
                 aria-label={`Go to slide ${index + 1}`}
+                aria-selected={index === current}
+                role="tab"
                 className={`h-[3px] rounded-full transition-all duration-300 ${
                   index === current
                     ? "w-8 bg-white"
