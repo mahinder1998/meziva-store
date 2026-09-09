@@ -5,8 +5,11 @@ import Link from "next/link";
 import { useState, useEffect, useCallback, useRef } from "react";
 
 // 👇 Add/remove slides here. Each slide needs a desktop + mobile image.
-// Text fields (eyebrow, heading, subheading, ctaText, ctaLink) are optional —
-// leave them out entirely for an image-only slide.
+// Text fields (eyebrow, heading, subheading, ctaText) are optional — leave
+// them out entirely for a clean image-only slide.
+//
+// Every slide is clickable and takes the customer to `link` (defaults to
+// /shop if not set).
 //
 // IMPORTANT: set desktopWidth/desktopHeight and mobileWidth/mobileHeight to
 // match your actual image file dimensions (in pixels) — this lets the image
@@ -21,6 +24,7 @@ const slides = [
     mobileWidth: 750,
     mobileHeight: 1000,
     alt: "Meziva Hydrating Lip Balm - SPF 30 Protection",
+    link: "/shop",
   },
   // {
   //   id: 2,
@@ -31,11 +35,11 @@ const slides = [
   //   mobileWidth: 750,
   //   mobileHeight: 1000,
   //   alt: "Meziva Berry Blast Lip Balm",
+  //   link: "/shop",
   //   eyebrow: "Just Launched",
   //   heading: "Berry Blast has arrived",
   //   subheading: "Deeply nourishing, naturally tinted",
   //   ctaText: "Explore",
-  //   ctaLink: "/shop",
   // },
 ];
 
@@ -114,6 +118,7 @@ export default function HeroBanner() {
       <div className="relative w-full grid">
         {slides.map((slide, index) => {
           const hasContent = Boolean(slide.heading);
+          const href = slide.link || "/shop";
 
           return (
             <div
@@ -123,7 +128,9 @@ export default function HeroBanner() {
               }`}
               aria-hidden={index !== current}
             >
-              <div className="relative w-full">
+              {/* Entire slide is one clickable link — image, overlay and
+                  text all navigate to `href` when tapped/clicked. */}
+              <Link href={href} className="relative w-full block group">
                 {/* Desktop Image — natural aspect ratio, no cropping */}
                 <Image
                   src={slide.desktopImage}
@@ -169,13 +176,10 @@ export default function HeroBanner() {
                             {slide.subheading}
                           </p>
                         )}
-                        {slide.ctaText && slide.ctaLink && (
-                          <Link
-                            href={slide.ctaLink}
-                            className="inline-block border border-white px-8 py-3 text-sm uppercase tracking-widest2 text-white hover:bg-wine hover:border-wine transition-colors duration-300"
-                          >
+                        {slide.ctaText && (
+                          <span className="inline-block border border-white px-8 py-3 text-sm uppercase tracking-widest2 text-white group-hover:bg-wine group-hover:border-wine transition-colors duration-300">
                             {slide.ctaText}
-                          </Link>
+                          </span>
                         )}
 
                         <p className="mt-5 text-[11px] md:text-xs tracking-widest2 uppercase text-white/70">
@@ -185,7 +189,7 @@ export default function HeroBanner() {
                     </div>
                   </div>
                 )}
-              </div>
+              </Link>
             </div>
           );
         })}

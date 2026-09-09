@@ -9,7 +9,7 @@ import { useCart } from "@/context/CartContext";
 const LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/contact-us", label: "Contact" },
 ];
 
 export default function Navbar() {

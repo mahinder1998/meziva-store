@@ -11,14 +11,6 @@ import { fbqTrack } from "@/lib/fbpixel";
 const SHIPPING_FLAT = 29;
 const FREE_SHIPPING_THRESHOLD = 5000;
 
-// COD orders require this much to be paid upfront via Razorpay before the
-// order is confirmed — filters out fake/prank COD orders. It's adjusted
-// against the order total, not charged extra; the rest is still cash on
-// delivery. Kept in sync with COD_ADVANCE_AMOUNT in app/api/orders/route.js
-// (that server-side value is what's actually enforced — this one is just
-// for displaying the right numbers to the customer).
-const COD_ADVANCE = 19;
-
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const router = useRouter();
@@ -38,7 +30,6 @@ export default function CheckoutPage() {
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT;
   const total = subtotal + shipping;
-  const codRemaining = Math.max(total - COD_ADVANCE, 0);
 
   // Safety net: fires begin_checkout if someone lands directly on
   // /checkout (bookmark, back button) without clicking the button in
@@ -153,7 +144,7 @@ export default function CheckoutPage() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: orderData.order.amount,
           currency: "INR",
-          name: "meziva",
+          name: "Meziva Beauty",
           description,
           order_id: orderData.order.id,
           prefill: {
@@ -161,7 +152,7 @@ export default function CheckoutPage() {
             email: form.email,
             contact: form.phone,
           },
-          theme: { color: "#111111" },
+          theme: { color: "#7A2E3A" },
           handler: async function (response) {
             const verifyRes = await fetch("/api/razorpay/verify", {
               method: "POST",
@@ -203,42 +194,21 @@ export default function CheckoutPage() {
     });
   }
 
+  // Plain Cash on Delivery — no advance payment required. The full amount
+  // is collected in cash when the order is delivered.
   async function handleCOD() {
     if (!validateForm()) return;
     setLoading(true);
     setError("");
 
-    // Step 1: collect the ₹19 advance via Razorpay first. The order is
-    // only saved after this is paid and verified — a customer can't get a
-    // COD order created without it.
-    const advanceResponse = await payWithRazorpay({
-      amount: COD_ADVANCE,
-      description: `COD order advance (₹${COD_ADVANCE}, adjusted in your total — pay ${formatPrice(
-        codRemaining
-      )} in cash on delivery)`,
-      onError: setError,
-    });
-
-    if (!advanceResponse) {
-      setLoading(false);
-      return;
-    }
-
     try {
-      const result = await saveOrder({
-        codAdvance: {
-          amount: COD_ADVANCE,
-          razorpay_order_id: advanceResponse.razorpay_order_id,
-          razorpay_payment_id: advanceResponse.razorpay_payment_id,
-          razorpay_signature: advanceResponse.razorpay_signature,
-        },
-      });
+      const result = await saveOrder();
 
       if (result.success) {
         pushPurchaseEvent(result.order.id, "COD");
         clearCart();
         router.push(
-          `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=COD&advance=${COD_ADVANCE}&remaining=${codRemaining}`
+          `/order-success?orderId=${result.order.id}&orderNumber=${result.order.orderNumber}&method=COD`
         );
       } else {
         setError(
@@ -295,8 +265,8 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container-x py-24 text-center">
-        <h1 className="section-heading">Your bag is empty</h1>
+      <div className="container-x py-20 md:py-24 text-center">
+        <h1 className="font-serif text-2xl md:text-3xl text-charcoal">Your bag is empty</h1>
       </div>
     );
   }
@@ -304,17 +274,19 @@ export default function CheckoutPage() {
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div className="container-x py-4 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <form onSubmit={handleSubmit} className="md:col-span-2 space-y-8">
+      <div className="container-x py-6 md:py-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 pb-28 md:pb-10">
+        <form onSubmit={handleSubmit} className="md:col-span-2 space-y-7 md:space-y-8">
           <div>
-            <h2 className=" text-xl mb-6">Shipping Details</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h2 className="font-serif text-lg md:text-xl text-charcoal mb-5 md:mb-6">
+              Shipping Details
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:gap-4">
               <input
                 name="name"
                 placeholder="Full Name"
                 value={form.name}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm sm:col-span-2"
+                className="border border-charcoal/20 px-4 py-3 text-sm sm:col-span-2 focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="email"
@@ -322,54 +294,56 @@ export default function CheckoutPage() {
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm"
+                className="border border-charcoal/20 px-4 py-3 text-sm focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="phone"
                 placeholder="Phone Number"
                 value={form.phone}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm"
+                className="border border-charcoal/20 px-4 py-3 text-sm focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="address"
                 placeholder="Address"
                 value={form.address}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm sm:col-span-2"
+                className="border border-charcoal/20 px-4 py-3 text-sm sm:col-span-2 focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="city"
                 placeholder="City"
                 value={form.city}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm"
+                className="border border-charcoal/20 px-4 py-3 text-sm focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="state"
                 placeholder="State"
                 value={form.state}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm"
+                className="border border-charcoal/20 px-4 py-3 text-sm focus:outline-none focus:border-charcoal transition-colors"
               />
               <input
                 name="pincode"
                 placeholder="Pincode"
                 value={form.pincode}
                 onChange={handleChange}
-                className="border border-black/20 px-4 py-3 text-sm"
+                className="border border-charcoal/20 px-4 py-3 text-sm focus:outline-none focus:border-charcoal transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <h2 className=" text-xl mb-6">Payment Method</h2>
+            <h2 className="font-serif text-lg md:text-xl text-charcoal mb-5 md:mb-6">
+              Payment Method
+            </h2>
             <div className="space-y-3">
               <label
-                className={`flex items-center gap-3 border px-4 py-4 cursor-pointer ${
+                className={`flex items-center gap-3 border px-4 py-4 cursor-pointer transition-colors ${
                   paymentMethod === "RAZORPAY"
                     ? "border-charcoal"
-                    : "border-black/15"
+                    : "border-charcoal/15"
                 }`}
               >
                 <input
@@ -386,8 +360,8 @@ export default function CheckoutPage() {
                 </div>
               </label>
               <label
-                className={`flex items-start gap-3 border px-4 py-4 cursor-pointer ${
-                  paymentMethod === "COD" ? "border-charcoal" : "border-black/15"
+                className={`flex items-start gap-3 border px-4 py-4 cursor-pointer transition-colors ${
+                  paymentMethod === "COD" ? "border-charcoal" : "border-charcoal/15"
                 }`}
               >
                 <input
@@ -400,13 +374,8 @@ export default function CheckoutPage() {
                 <div>
                   <p className="text-sm font-medium">Cash on Delivery</p>
                   <p className="text-xs text-charcoal/50">
-                    Pay in cash when your order arrives
-                  </p>
-                  <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1.5 mt-2 inline-block">
-                    ₹{COD_ADVANCE} advance payable now (via UPI/Card, powered
-                    by Razorpay) to confirm this order — this is part of
-                    your total, not extra. Remaining{" "}
-                    {formatPrice(codRemaining)} payable in cash on delivery.
+                    Pay the full amount in cash when your order arrives — no
+                    advance payment needed.
                   </p>
                 </div>
               </label>
@@ -419,31 +388,39 @@ export default function CheckoutPage() {
             </p>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full disabled:opacity-60"
+          >
             {loading
               ? "Processing..."
               : paymentMethod === "COD"
-              ? `Pay ₹${COD_ADVANCE} Advance & Confirm Order (COD)`
+              ? "Place Order (Cash on Delivery)"
               : `Pay ${formatPrice(total)}`}
           </button>
         </form>
 
         {/* Order summary */}
         <div>
-          <div className="bg-white p-8 sticky top-28">
-            <h2 className=" text-xl mb-6">Order Summary</h2>
+          <div className="bg-white p-6 md:p-8 md:sticky md:top-28 border border-charcoal/10">
+            <h2 className="font-serif text-lg md:text-xl text-charcoal mb-5 md:mb-6">
+              Order Summary
+            </h2>
             <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
               {items.map((item) => (
                 <div key={item.key} className="flex justify-between text-sm">
                   <span className="text-charcoal/70">
-                    {item.name} × {item.qty}{" "}
-                    <span className="text-charcoal/40">({item.size})</span>
+                    {item.name} × {item.qty}
+                    {item.size && (
+                      <span className="text-charcoal/40"> ({item.size})</span>
+                    )}
                   </span>
-                  <span>{formatPrice(item.price * item.qty)}</span>
+                  <span className="shrink-0 ml-3">{formatPrice(item.price * item.qty)}</span>
                 </div>
               ))}
             </div>
-            <div className="border-t border-black/10 pt-4 space-y-2">
+            <div className="border-t border-charcoal/10 pt-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
@@ -452,21 +429,14 @@ export default function CheckoutPage() {
                 <span>Shipping</span>
                 <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
               </div>
-              <div className="flex justify-between font-medium border-t border-black/10 pt-3">
+              <div className="flex justify-between font-medium border-t border-charcoal/10 pt-3 text-base">
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
               {paymentMethod === "COD" && (
-                <div className="border-t border-black/10 pt-3 space-y-1 text-xs text-charcoal/60">
-                  <div className="flex justify-between">
-                    <span>Pay now (advance, online)</span>
-                    <span>{formatPrice(COD_ADVANCE)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Pay on delivery (cash)</span>
-                    <span>{formatPrice(codRemaining)}</span>
-                  </div>
-                </div>
+                <p className="text-xs text-charcoal/50 pt-2">
+                  Full amount payable in cash on delivery.
+                </p>
               )}
             </div>
           </div>

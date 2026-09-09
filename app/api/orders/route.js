@@ -5,13 +5,6 @@ import { createShiprocketOrder } from "@/lib/shiprocket";
 import { addOrder, getNextOrderNumber } from "@/lib/orders";
 import { sendOrderEmailAlert, sendOrderWhatsAppAlert } from "@/lib/notifications";
 
-// COD orders require this much to be paid upfront via Razorpay before the
-// order is accepted. This filters out fake/prank COD orders — someone
-// entering random details to place a COD order won't bother completing a
-// real (if small) payment. The amount is adjusted against the order total,
-// not charged extra; the rest is still collected as cash on delivery.
-const COD_ADVANCE_AMOUNT = 19;
-
 // Same signature check as /api/razorpay/verify. Re-verified here,
 // server-side, because the client's "payment succeeded" callback can never
 // be trusted on its own — someone could hit this endpoint directly with
@@ -32,41 +25,28 @@ function isValidRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorp
 export async function POST(req) {
   try {
     const payload = await req.json();
-    const { codAdvance, razorpay: fullPaymentRazorpay, ...rest } = payload;
+    const { razorpay: fullPaymentRazorpay, ...rest } = payload;
 
     let razorpayInfo = null;
 
-    if (payload.paymentMethod === "COD") {
-      const isValid =
-        codAdvance &&
-        codAdvance.amount === COD_ADVANCE_AMOUNT &&
-        isValidRazorpaySignature(
-          codAdvance.razorpay_order_id,
-          codAdvance.razorpay_payment_id,
-          codAdvance.razorpay_signature
-        );
-
-      if (!isValid) {
+    // COD orders are accepted directly — no advance payment required.
+    // The full order amount is collected in cash on delivery.
+    if (payload.paymentMethod !== "COD" && fullPaymentRazorpay) {
+      if (
+        !isValidRazorpaySignature(
+          fullPaymentRazorpay.razorpay_order_id,
+          fullPaymentRazorpay.razorpay_payment_id,
+          fullPaymentRazorpay.razorpay_signature
+        )
+      ) {
         return NextResponse.json(
           {
             success: false,
-            error:
-              "₹19 advance payment could not be verified. Please complete the advance payment to confirm your COD order.",
+            error: "Payment could not be verified. Please contact support.",
           },
           { status: 400 }
         );
       }
-
-      razorpayInfo = {
-        type: "cod_advance",
-        amount: COD_ADVANCE_AMOUNT,
-        remaining: Math.max((rest.total ?? 0) - COD_ADVANCE_AMOUNT, 0),
-        razorpay_order_id: codAdvance.razorpay_order_id,
-        razorpay_payment_id: codAdvance.razorpay_payment_id,
-        razorpay_signature: codAdvance.razorpay_signature,
-        verifiedAt: new Date().toISOString(),
-      };
-    } else if (fullPaymentRazorpay) {
       razorpayInfo = { type: "full_payment", ...fullPaymentRazorpay };
     }
 
@@ -74,9 +54,9 @@ export async function POST(req) {
       id: uuidv4(),
       orderNumber: await getNextOrderNumber(),
       createdAt: new Date().toISOString(),
-      // COD orders still show as "pending" (cash collection / delivery is
-      // pending) even though the ₹19 advance has already been verified and
-      // captured above — that detail is carried in order.razorpay.
+      // COD orders show as "pending" until cash is collected on delivery.
+      // Prepaid (Razorpay) orders show as "paid" immediately since the
+      // signature has already been verified above.
       status: payload.paymentMethod === "COD" ? "pending" : "paid",
       ...rest,
       razorpay: razorpayInfo,

@@ -76,12 +76,12 @@ export default function ProductTabs({ product, reviews: initialReviews }) {
   return (
     <div className="container-x mt-16 md:mt-24">
       {/* Tab headers */}
-      <div className="flex gap-6 sm:gap-10 border-b border-charcoal/10 overflow-x-auto overflow-y-hidden">
+      <div className="flex gap-5 sm:gap-10 border-b border-charcoal/10 overflow-x-auto overflow-y-hidden -mx-5 px-5 md:mx-0 md:px-0">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActive(tab.key)}
-            className={`whitespace-nowrap pb-4 text-xs sm:text-sm uppercase tracking-widest2 transition-colors relative ${
+            className={`whitespace-nowrap pb-3.5 md:pb-4 text-[11px] sm:text-sm uppercase tracking-widest2 transition-colors relative ${
               active === tab.key
                 ? "text-charcoal"
                 : "text-charcoal/40 hover:text-charcoal/70"
@@ -96,15 +96,15 @@ export default function ProductTabs({ product, reviews: initialReviews }) {
       </div>
 
       {/* Tab panels */}
-      <div className="py-10 max-w-3xl">
+      <div className="py-8 md:py-10 max-w-3xl">
         {active === "description" && (
-          <p className="text-sm leading-7 text-charcoal/70">
+          <p className="text-[15px] md:text-sm leading-relaxed md:leading-7 text-charcoal/70">
             {product.description}
           </p>
         )}
 
         {active === "howToUse" && (
-          <p className="text-sm leading-7 text-charcoal/70">
+          <p className="text-[15px] md:text-sm leading-relaxed md:leading-7 text-charcoal/70">
             {product.howToUse ||
               "Care and usage instructions for this product will be added soon."}
           </p>

@@ -4,6 +4,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Prevent iOS from auto-zooming into inputs sized below 16px */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -16,7 +18,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-charcoal text-white px-8 py-4  font-bold uppercase text-xs tracking-widest2 hover:bg-gold transition-colors duration-300;
+  @apply bg-charcoal text-white px-8 py-4 font-medium uppercase text-xs tracking-widest2 hover:bg-wine transition-colors duration-300;
 }
 
 .btn-secondary {
@@ -24,5 +26,15 @@ body {
 }
 
 .section-heading {
-  @apply font-semibold text-2xl md:text-3xl text-charcoal;
+  @apply font-serif text-2xl md:text-3xl text-charcoal;
+}
+
+/* Keep body copy at a comfortably readable size on small screens —
+   luxury design still needs to be legible without pinch-zooming. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
