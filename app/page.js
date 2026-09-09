@@ -44,7 +44,7 @@ export default async function HomePage() {
       </section>
 
       {/* What's Inside — ingredient transparency builds trust fast */}
-      <section className="bg-blush/40 py-16 md:py-24">
+      {/* <section className="bg-blush/40 py-16 md:py-24">
         <div className="container-x">
           <div className="text-center mb-12 md:mb-16">
             <p className="text-xs uppercase tracking-widest3 text-wine mb-3">
@@ -89,7 +89,7 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Value props */}
       <section className="bg-white py-16 md:py-20 border-t border-charcoal/10">

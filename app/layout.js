@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Suspense } from "react";
-import { Fraunces, Manrope } from "next/font/google";
+import { Fraunces, Roboto } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,9 +20,10 @@ const fraunces = Fraunces({
   fallback: ["Georgia", "Cambria", "serif"],
 });
 
-const manrope = Manrope({
+const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  style: ["normal", "italic"],
   variable: "--font-body",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
@@ -39,7 +40,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${manrope.variable}`}
+      className={`${fraunces.variable} ${roboto.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -7,17 +7,29 @@ import { useState, useEffect, useCallback, useRef } from "react";
 // 👇 Add/remove slides here. Each slide needs a desktop + mobile image.
 // Text fields (eyebrow, heading, subheading, ctaText, ctaLink) are optional —
 // leave them out entirely for an image-only slide.
+//
+// IMPORTANT: set desktopWidth/desktopHeight and mobileWidth/mobileHeight to
+// match your actual image file dimensions (in pixels) — this lets the image
+// render at its true, uncropped aspect ratio instead of being force-cropped.
 const slides = [
   {
     id: 1,
     desktopImage: "/images/banner-desk.png",
+    desktopWidth: 1920,
+    desktopHeight: 800,
     mobileImage: "/images/banner-mobile.png",
+    mobileWidth: 750,
+    mobileHeight: 1000,
     alt: "Meziva Hydrating Lip Balm - SPF 30 Protection",
   },
   // {
   //   id: 2,
   //   desktopImage: "/images/hero/hero-desktop-2.jpg",
+  //   desktopWidth: 1920,
+  //   desktopHeight: 800,
   //   mobileImage: "/images/hero/hero-mobile-2.jpg",
+  //   mobileWidth: 750,
+  //   mobileHeight: 1000,
   //   alt: "Meziva Berry Blast Lip Balm",
   //   eyebrow: "Just Launched",
   //   heading: "Berry Blast has arrived",
@@ -96,82 +108,84 @@ export default function HeroBanner() {
       aria-roledescription="carousel"
       aria-label="Featured products"
     >
-      <div className="relative w-full h-[70vh] md:h-[85vh]">
+      {/* Grid stacking instead of position:absolute — each slide occupies the
+          same grid cell, so slides layer on top of each other for the
+          crossfade without forcing a fixed height or cropping the image. */}
+      <div className="relative w-full grid">
         {slides.map((slide, index) => {
-          // Only show the text/CTA block if the slide actually has a heading
           const hasContent = Boolean(slide.heading);
 
           return (
             <div
               key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                index === current ? "opacity-100 z-10" : "opacity-0 z-0"
+              className={`col-start-1 row-start-1 transition-opacity duration-700 ease-in-out ${
+                index === current ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
               }`}
               aria-hidden={index !== current}
             >
-              {/* Desktop Image */}
-              <div className="hidden md:block relative w-full h-full">
+              <div className="relative w-full">
+                {/* Desktop Image — natural aspect ratio, no cropping */}
                 <Image
                   src={slide.desktopImage}
                   alt={slide.alt || "Meziva Beauty"}
-                  fill
+                  width={slide.desktopWidth}
+                  height={slide.desktopHeight}
                   priority={index === 0}
                   sizes="100vw"
-                  className="object-cover"
+                  className="hidden md:block w-full h-auto"
                 />
-              </div>
 
-              {/* Mobile Image */}
-              <div className="block md:hidden relative w-full h-full">
+                {/* Mobile Image — natural aspect ratio, no cropping */}
                 <Image
                   src={slide.mobileImage}
                   alt={slide.alt || "Meziva Beauty"}
-                  fill
+                  width={slide.mobileWidth}
+                  height={slide.mobileHeight}
                   priority={index === 0}
                   sizes="100vw"
-                  className="object-cover"
+                  className="block md:hidden w-full h-auto"
                 />
-              </div>
 
-              {/* Gradient overlay — only needed when there's text to read over the image */}
-              {hasContent && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-              )}
+                {/* Gradient overlay — only needed when there's text to read over the image */}
+                {hasContent && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+                )}
 
-              {/* Content — fully skipped if slide has no heading (image-only slide) */}
-              {hasContent && (
-                <div className="absolute inset-0 flex items-end md:items-center pb-16 md:pb-0">
-                  <div className="container-x">
-                    <div className="max-w-lg text-white">
-                      {slide.eyebrow && (
-                        <p className="text-xs md:text-sm uppercase tracking-widest3 text-white/80 mb-3">
-                          {slide.eyebrow}
+                {/* Content — fully skipped if slide has no heading (image-only slide) */}
+                {hasContent && (
+                  <div className="absolute inset-0 flex items-end md:items-center pb-16 md:pb-0">
+                    <div className="container-x">
+                      <div className="max-w-lg text-white">
+                        {slide.eyebrow && (
+                          <p className="text-xs md:text-sm uppercase tracking-widest3 text-white/80 mb-3">
+                            {slide.eyebrow}
+                          </p>
+                        )}
+                        <h1 className="font-serif text-4xl md:text-6xl leading-[1.1] mb-4">
+                          {slide.heading}
+                        </h1>
+                        {slide.subheading && (
+                          <p className="text-sm md:text-base tracking-widest2 uppercase text-white/85 mb-8">
+                            {slide.subheading}
+                          </p>
+                        )}
+                        {slide.ctaText && slide.ctaLink && (
+                          <Link
+                            href={slide.ctaLink}
+                            className="inline-block border border-white px-8 py-3 text-sm uppercase tracking-widest2 text-white hover:bg-wine hover:border-wine transition-colors duration-300"
+                          >
+                            {slide.ctaText}
+                          </Link>
+                        )}
+
+                        <p className="mt-5 text-[11px] md:text-xs tracking-widest2 uppercase text-white/70">
+                          Free Shipping · Cash on Delivery · 7-Day Returns
                         </p>
-                      )}
-                      <h1 className="font-serif text-4xl md:text-6xl leading-[1.1] mb-4">
-                        {slide.heading}
-                      </h1>
-                      {slide.subheading && (
-                        <p className="text-sm md:text-base tracking-widest2 uppercase text-white/85 mb-8">
-                          {slide.subheading}
-                        </p>
-                      )}
-                      {slide.ctaText && slide.ctaLink && (
-                        <Link
-                          href={slide.ctaLink}
-                          className="inline-block border border-white px-8 py-3 text-sm uppercase tracking-widest2 text-white hover:bg-wine hover:border-wine transition-colors duration-300"
-                        >
-                          {slide.ctaText}
-                        </Link>
-                      )}
-
-                      <p className="mt-5 text-[11px] md:text-xs tracking-widest2 uppercase text-white/70">
-                        Free Shipping · Cash on Delivery · 7-Day Returns
-                      </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           );
         })}
