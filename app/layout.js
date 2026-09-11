@@ -39,12 +39,11 @@ const fraunces = Fraunces({
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "700"],
   style: ["normal", "italic"],
   variable: "--font-roboto",
   display: "swap",
 });
-
 
 /* =========================================================
    METADATA
