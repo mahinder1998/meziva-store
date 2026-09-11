@@ -1,23 +1,33 @@
 @tailwind base;
+
 @tailwind components;
+
 @tailwind utilities;
 
-/* =========================================================
-   MEZIVA TYPOGRAPHY
-   ========================================================= */
-
 html {
+  scroll-behavior: smooth;
+
+  /* Prevent iOS from auto-zooming into inputs sized below 16px */
+  -webkit-text-size-adjust: 100%;
+
+  /* Default body font */
   font-family: var(--font-roboto), Arial, sans-serif;
 }
 
 body {
+  background-color: #f7f4ef;
+  color: #111111;
+
+  /* Body/UI font */
   font-family: var(--font-roboto), Arial, sans-serif;
-  font-weight: 400;
 }
 
 
-/* HEADINGS */
+/* ==========================================================
+   TYPOGRAPHY
+   ========================================================== */
 
+/* Headings use Fraunces */
 h1,
 h2,
 h3,
@@ -25,43 +35,59 @@ h4,
 h5,
 h6 {
   font-family: var(--font-fraunces), Georgia, serif;
-  font-weight: 500;
 }
 
-
-/* BODY / UI */
-
+/* Keep standard UI/body elements on Roboto */
 p,
 span,
 a,
 button,
 input,
-textarea,
 select,
+textarea,
 label {
   font-family: var(--font-roboto), Arial, sans-serif;
 }
 
-
-/* FORM ELEMENTS */
-
-input,
-textarea,
-select,
-button {
-  font: inherit;
-}
-
-
-/* TAILWIND FONT-SERIF */
-
+/* Tailwind font-serif class */
 .font-serif {
   font-family: var(--font-fraunces), Georgia, serif !important;
 }
 
-
-/* TAILWIND FONT-SANS */
-
+/* Tailwind font-sans class */
 .font-sans {
   font-family: var(--font-roboto), Arial, sans-serif !important;
+}
+
+
+/* ==========================================================
+   EXISTING CODE
+   ========================================================== */
+
+.container-x {
+  @apply max-w-7xl mx-auto px-5 md:px-10;
+}
+
+.btn-primary {
+  @apply bg-charcoal text-white px-8 py-4 font-medium uppercase text-xs tracking-widest2 hover:bg-wine transition-colors duration-300;
+}
+
+.btn-secondary {
+  @apply border border-charcoal text-charcoal px-8 py-3 uppercase text-xs tracking-widest2 hover:bg-charcoal hover:text-white transition-colors duration-300;
+}
+
+.section-heading {
+  @apply font-serif text-2xl md:text-3xl text-charcoal;
+}
+
+
+/* Keep body copy at a comfortably readable size on small screens —
+   luxury design still needs to be legible without pinch-zooming. */
+
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
