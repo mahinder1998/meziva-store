@@ -241,6 +241,15 @@ export default function CheckoutPage() {
 
     try {
       const result = await saveOrder({ razorpay: response });
+
+      if (!result.success || !result.order) {
+        setError(
+          result.error ||
+            "Payment was successful, but we could not create your order. Please contact support."
+        );
+        return;
+      }
+
       pushPurchaseEvent(result.order.id, "RAZORPAY");
       clearCart();
       router.push(
@@ -283,6 +292,7 @@ export default function CheckoutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:gap-4">
               <input
                 name="name"
+                autoComplete="name"
                 placeholder="Full Name"
                 value={form.name}
                 onChange={handleChange}
@@ -291,6 +301,7 @@ export default function CheckoutPage() {
               <input
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
@@ -298,6 +309,10 @@ export default function CheckoutPage() {
               />
               <input
                 name="phone"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                maxLength={10}
                 placeholder="Phone Number"
                 value={form.phone}
                 onChange={handleChange}
@@ -305,6 +320,7 @@ export default function CheckoutPage() {
               />
               <input
                 name="address"
+                autoComplete="street-address"
                 placeholder="Address"
                 value={form.address}
                 onChange={handleChange}
@@ -312,6 +328,7 @@ export default function CheckoutPage() {
               />
               <input
                 name="city"
+                autoComplete="address-level2"
                 placeholder="City"
                 value={form.city}
                 onChange={handleChange}
@@ -319,6 +336,7 @@ export default function CheckoutPage() {
               />
               <input
                 name="state"
+                autoComplete="address-level1"
                 placeholder="State"
                 value={form.state}
                 onChange={handleChange}
@@ -326,6 +344,9 @@ export default function CheckoutPage() {
               />
               <input
                 name="pincode"
+                inputMode="numeric"
+                autoComplete="postal-code"
+                maxLength={6}
                 placeholder="Pincode"
                 value={form.pincode}
                 onChange={handleChange}

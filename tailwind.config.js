@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/**/*.{js,jsx}",
-    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx,ts,tsx,mdx}",
+    "./components/**/*.{js,jsx,ts,tsx,mdx}",
   ],
+
   theme: {
     extend: {
       colors: {
@@ -13,15 +14,21 @@ module.exports = {
         wine: "#7A2E3A",
         blush: "#E8D2C9",
       },
+
       fontFamily: {
-        serif: ["var(--font-display)", "Georgia", "Cambria", "serif"],
-        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        // Headings / luxury display
+        serif: ["var(--font-fraunces)", "Georgia", "serif"],
+
+        // Body / buttons / forms / navigation
+        sans: ["var(--font-roboto)", "Arial", "sans-serif"],
       },
+
       letterSpacing: {
         widest2: "0.25em",
         widest3: "0.35em",
       },
     },
   },
+
   plugins: [],
 };
